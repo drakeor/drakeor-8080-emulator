@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "minunit.h"
 #include "disasm.h"
+#include "cpu.h"
 
 int tests_run = 0;
 
