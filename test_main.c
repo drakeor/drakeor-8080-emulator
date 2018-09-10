@@ -1,38 +1,62 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "minunit.h"
 #include "disasm.h"
 #include "cpu.h"
+#include "munit.h"
 
-int tests_run = 0;
+// Uses munit
+// https://nemequ.github.io/munit/#getting-started
 
 char blank_data[2] = { 0x00, 0x00 };
 
-static char* test_op_to_text() {
-    int pc = 0;
-    mu_assert("error, 0x00 should return zero", op_to_text(blank_data, &pc) == 0);
-    return 0;
+// Known code should return success
+static MunitResult
+    test_op_to_text(const MunitParameter params[], void* fixture) {
+        int pc = 0;
+        munit_assert_int(op_to_text(blank_data, &pc), ==, 0);
+        return MUNIT_OK;
 }
 
-static char* test_disassembly() {
-    mu_assert("error, sample program should return zero", disassemble(blank_data, 2) == 0);
-    return 0;
+// Should work for data 
+static MunitResult
+    test_disassembly(const MunitParameter params[], void* fixture) {
+        munit_assert_int(disassemble(blank_data, 2), ==, 0);
+        return MUNIT_OK;
 }
 
 
-static char* run_all_tests() {
-    mu_run_test(test_op_to_text);
-    mu_run_test(test_disassembly);
-    return 0;
+MunitTest tests[] = {
+  {
+    "/disasm/op_to_text", /* name */
+    test_op_to_text, /* test */
+    NULL, /* setup */
+    NULL, /* tear_down */
+    MUNIT_TEST_OPTION_NONE, /* options */
+    NULL /* parameters */
+  },
+  {
+    "/disasm/disassembly", /* name */
+    test_disassembly, /* test */
+    NULL, /* setup */
+    NULL, /* tear_down */
+    MUNIT_TEST_OPTION_NONE, /* options */
+    NULL /* parameters */
+  },
+
+  /* Mark the end of the array with an entry where the test
+   * function is NULL */
+  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+};
+
+static const MunitSuite suite = {
+  "/unit-tests", /* name */
+  tests, /* tests */
+  NULL, /* suites */
+  1, /* iterations */
+  MUNIT_SUITE_OPTION_NONE /* options */
+};
+
+int main (int argc, const char* argv[]) {
+  return munit_suite_main(&suite, NULL, argc, argv);
 }
 
-int main(int argc, char** argv) {
-    char* res = run_all_tests();
-    if(res != 0) {
-        printf("%s\n", res);
-    } else {
-        printf("ALL TESTS PASSED\n");
-    }
-    printf("Tests run: %d\n", tests_run);
-    return res != 0;
-}

@@ -1,5 +1,5 @@
 #include "cpu.h"
 
-int initcpu(cpustate* cpu) {
+int initcpu(struct cpustate* cpu) {
     return 0;
 }
