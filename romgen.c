@@ -38,7 +38,8 @@ int main(int argc, char** argv)
     fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\nstatic char* rom = {\n");
 
     // Convert to hex
-    for(unsigned int i = 0; i < sz; i++) {
+    unsigned int i = 0;
+    for(i = 0; i < sz; i++) {
         if(i % 8 == 0)
             fprintf(fw, "\n");
         if(i % 8 == 0)
