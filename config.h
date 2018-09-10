@@ -2,6 +2,6 @@
 #define CONFIG_H
 
 // Set to point to the rom here
-#include "roms/blank.h"
+#include "roms/test.h"
 
 #endif

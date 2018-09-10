@@ -44,17 +44,21 @@ struct cpustate {
     // 8-bit Flag register
     union {
         struct {
-            unsigned char S:1;
-            unsigned char Z:1;
+            unsigned char S:1;  // Sign bit, set if the result is negative
+            unsigned char Z:1;  // Zero bit, set if the result is zero 
+            unsigned char :1;   
+            unsigned char AC:1; // Auxiliary carry bit for binary coded decimal arithmetic 
             unsigned char :1;
-            unsigned char AC:1;
+            unsigned char P:1;  // Parity bit, set if the number of true bits in the result is even
             unsigned char :1;
-            unsigned char P:1;
-            unsigned char :1;
-            unsigned char C:1;
+            unsigned char C:1;  // Carry, set if the last addition operation resulted in a carry 
+                                // or last sub required borrow
         } bits;
         uint8_t FLAGS;
     } PSW;
 };
+
+// Returns a new cpu instance
+int initcpu();
 
 #endif

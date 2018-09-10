@@ -19,6 +19,7 @@ static char* test_disassembly() {
     return 0;
 }
 
+
 static char* run_all_tests() {
     mu_run_test(test_op_to_text);
     mu_run_test(test_disassembly);
