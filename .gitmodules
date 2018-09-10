@@ -1,0 +1,3 @@
+[submodule "roms/googletest"]
+	path = roms/googletest
+	url = https://github.com/google/googletest.git
