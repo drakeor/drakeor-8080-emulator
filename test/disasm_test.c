@@ -2,7 +2,7 @@
 #include "disasm_test.h"
 
 #define PRGM_DATA_SIZE 2
-char program_data[PRGM_DATA_SIZE] = { 0x00, 0x78 };
+char program_data[PRGM_DATA_SIZE] = { 0x00, 0x00 };
 
 char invalid_op_program[PRGM_DATA_SIZE] = { 0xFF };
 
