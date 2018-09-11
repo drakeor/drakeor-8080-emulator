@@ -77,4 +77,16 @@ MunitResult
         cpu.FLAGS.C = 1;
         cpu.FLAGS.P = 1;
         munit_assert_int(cpu.PSW, ==, 0b11010101); 
+
+        return MUNIT_OK;
+}
+
+// Ensure this function works
+MunitResult
+    test_dump_registers(const MunitParameter params[], void* fixture) {
+        struct cpustate cpu;
+        init_cpu(&cpu);
+        dump_registers(&cpu);
+
+        return MUNIT_OK;
 }

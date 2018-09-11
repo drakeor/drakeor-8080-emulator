@@ -6,6 +6,7 @@
 #include "test/munit.h"
 #include "test/disasm_test.h"
 #include "test/cpu_test.h"
+#include "test/cpu_process_test.h"
 
 // List of tests
 MunitTest tests[] = {
@@ -18,6 +19,10 @@ MunitTest tests[] = {
     {"/cpu/cpuinit_reset", test_initcpu_reset, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu/cpuinit_registers", test_initcpu_registers, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu/dump_registers", test_dump_registers, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/C3",test_cpuprocess_C3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
