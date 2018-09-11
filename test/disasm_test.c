@@ -33,7 +33,8 @@ MunitResult
 MunitResult
     test_op_to_text_all(const MunitParameter params[], void* fixture)
 {
-    for(int i=0;i<0xFF;i++) {
+    int i;
+    for(i=0;i<0xFF;i++) {
         int pc = 0;
         char program_opcode[1] = { (char)i };
         op_to_text(program_opcode, 1, &pc);
