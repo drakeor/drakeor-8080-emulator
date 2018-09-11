@@ -2,6 +2,9 @@
 #define CONFIG_H
 
 // Set to point to the rom here
-#include "roms/test.h"
+#include "roms/invaders.h"
+
+// Point to the start of the program here
+#define PROGRAM_START 0x00
 
 #endif

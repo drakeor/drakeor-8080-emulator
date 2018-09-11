@@ -1,9 +1,15 @@
-#ifndef CPU_H
-#define CPU_H
+#ifndef CPU_H__
+#define CPU_H__
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+// Load config
+#include "config.h"
+
+// Stack pointer start
+#define STACK_START 0xF000
 
 // Holds the current state of the CPU
 struct cpustate {
@@ -17,23 +23,23 @@ struct cpustate {
         struct {
             uint8_t B;
             uint8_t C;
-        } s;
-        uint16_t b;
-    } BC;
+        };
+        uint16_t BC;
+    };
     union {
         struct {
             uint8_t D;
             uint8_t E;
-        } s;
-        uint16_t b;
-    } DE;
+        };
+        uint16_t DE;
+    };
     union {
         struct {
             uint8_t H;
             uint8_t L;
-        } s;
-        uint16_t b;
-    } HL;
+        };
+        uint16_t HL;
+    };
     
     // 16-bit stack pointer
     uint16_t SP;
@@ -53,12 +59,15 @@ struct cpustate {
             unsigned char :1;
             unsigned char C:1;  // Carry, set if the last addition operation resulted in a carry 
                                 // or last sub required borrow
-        } bits;
-        uint8_t FLAGS;
-    } PSW;
+        } FLAGS;
+        uint8_t PSW;
+    };
 };
 
-// Returns a new cpu instance
-int initcpu();
 
+// Returns a new cpu instance
+int init_cpu(struct cpustate* cpu);
 #endif
+
+
+
