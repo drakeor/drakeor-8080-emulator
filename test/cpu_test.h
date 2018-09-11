@@ -3,11 +3,14 @@
 
 #include "../cpu.h"
 
-// Known code should return success
 MunitResult
     test_initcpu(const MunitParameter params[], void* fixture);
 
 MunitResult
     test_initcpu_reset(const MunitParameter params[], void* fixture);
+
+MunitResult
+    test_initcpu_registers(const MunitParameter params[], void* fixture);
+
 
 #endif

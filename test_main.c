@@ -17,6 +17,8 @@ MunitTest tests[] = {
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu/cpuinit_reset", test_initcpu_reset, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu/cpuinit_registers", test_initcpu_registers, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 

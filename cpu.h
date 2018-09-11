@@ -21,22 +21,22 @@ struct cpustate {
     // that can function as 6 8-bit registers (B, C, D, E, H, L)
     union {
         struct {
-            uint8_t B;
             uint8_t C;
+            uint8_t B;
         };
         uint16_t BC;
     };
     union {
         struct {
-            uint8_t D;
             uint8_t E;
+            uint8_t D;
         };
         uint16_t DE;
     };
     union {
         struct {
-            uint8_t H;
             uint8_t L;
+            uint8_t H;
         };
         uint16_t HL;
     };
@@ -50,15 +50,15 @@ struct cpustate {
     // 8-bit Flag register
     union {
         struct {
-            unsigned char S:1;  // Sign bit, set if the result is negative
-            unsigned char Z:1;  // Zero bit, set if the result is zero 
-            unsigned char :1;   
-            unsigned char AC:1; // Auxiliary carry bit for binary coded decimal arithmetic 
+            unsigned char C:1;  // Carry, set if the last addition operation resulted in a carry 
+                                // or last sub required borrow
             unsigned char :1;
             unsigned char P:1;  // Parity bit, set if the number of true bits in the result is even
             unsigned char :1;
-            unsigned char C:1;  // Carry, set if the last addition operation resulted in a carry 
-                                // or last sub required borrow
+            unsigned char AC:1; // Auxiliary carry bit for binary coded decimal arithmetic 
+            unsigned char :1;   
+            unsigned char Z:1;  // Zero bit, set if the result is zero 
+            unsigned char S:1;  // Sign bit, set if the result is negative
         } FLAGS;
         uint8_t PSW;
     };

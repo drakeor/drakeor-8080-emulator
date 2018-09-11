@@ -25,8 +25,11 @@ Uses [MUnit](https://github.com/nemequ/munit) for unit testing.
 
 # Reference Links
 [Intel 8085 Opcode Table](http://www.eazynotes.com/notes/microprocessor/notes/opcodes-table-of-intel-8085.pdf)
+
 [Intel 8080 Instruction Set](http://www.pastraiser.com/cpu/i8080/i8080_opcodes.html)
+
 [intel 8080 Opcode card](http://www.cmas-net.org.uk/vintage/Ref-Cards/MCS85-Intel-8085-8080-Ref-Card-July-1977.pdf)
+
 [Space Invaders ROM](https://github.com/ezet/i8080-emulator/tree/master/invaders%20rom)
 
 
