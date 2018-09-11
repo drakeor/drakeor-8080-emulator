@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     }
 
     // Start writing into the file
-    fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\nstatic char* rom = {\n");
+    fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\nstatic char rom[%X] = {\n", sz);
 
     // Convert to hex
     unsigned int i = 0;
