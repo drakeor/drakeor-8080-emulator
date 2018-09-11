@@ -11,6 +11,10 @@
 // Stack pointer start
 #define STACK_START 0xF000
 
+// Memory size, we're going to have 16KB of ram installed.
+// 8080 Processors can address up to 64KB though.
+#define MEMORY_SIZE 0x4000
+
 // Holds the current state of the CPU
 struct cpustate {
     
@@ -67,7 +71,5 @@ struct cpustate {
 
 // Returns a new cpu instance
 int init_cpu(struct cpustate* cpu);
+
 #endif
-
-
-
