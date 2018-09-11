@@ -12,8 +12,11 @@
 MunitTest tests[] = {
     {"/disasm/op_to_text", test_op_to_text, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/disasm/op_to_text_all", test_op_to_text_all, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/disasm/disassembly", test_disassembly, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     {"/cpu/cpuinit", test_initcpu, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu/cpuinit_reset", test_initcpu_reset, 
@@ -22,8 +25,10 @@ MunitTest tests[] = {
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu/dump_registers", test_dump_registers, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     {"/cpu_process/C3",test_cpuprocess_C3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 

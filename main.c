@@ -7,14 +7,19 @@
 
 int main()
 {
+    // Set up CPU
     struct cpustate cpu;
     init_cpu(&cpu);
 
     printf("Starting..\n");
 
-    int res = disassemble(prom, PROGRAM_SIZE);
-    if(res)
-       printf("FAILED to process ROM!\n");
- 
+    // Main program loop
+    do {
+        // Need to copy the PC since op_to_name advances it.
+        int tPC = cpu.PC;
+        op_to_text(prom, PROGRAM_SIZE, &tPC);
+
+    } while(!process_cpu(&cpu, prom, PROGRAM_SIZE));
+
     return 0;
 }

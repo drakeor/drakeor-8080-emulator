@@ -42,7 +42,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
             if(cpu->PC+2 >= prom_size)
                 PANIC("C3 instruction overflows buffer");
             tmp = prom[cpu->PC+1] 
-                + (prom[cpu->PC+2] << 2);
+                + (prom[cpu->PC+2] << 8);
             if(tmp >= prom_size)
                 PANIC("C3 instruction jumped outside memory bounds");
             cpu->PC = tmp;

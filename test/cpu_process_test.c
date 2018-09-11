@@ -8,14 +8,24 @@ MunitResult
     // Setup CPU
     struct cpustate cpu;
 
-    // JMP instruction should set the PC to 0x0001
+    // JMP instruction should set the PC to 0x0002
     {
         init_cpu(&cpu);
-        unsigned char program[3] = { 0xC3, 0x01, 0x00 };
+        unsigned char program[3] = { 0xC3, 0x02, 0x00 };
         int res = process_cpu(&cpu, program, 3);
         munit_assert_int(res, ==, 0);
-        munit_assert_int(cpu.PC, ==, 0x0001);
+        munit_assert_int(cpu.PC, ==, 0x0002);
     }
+
+    // JMP instruction should set the PC to 0x88AA
+    {
+        init_cpu(&cpu);
+        unsigned char program[0xFFFF] = { 0xC3, 0xAA, 0x88 };
+        int res = process_cpu(&cpu, program, 0xFFFF);
+        munit_assert_int(res, ==, 0);
+        munit_assert_int(cpu.PC, ==, 0x88AA);
+    }
+
 
     // JMP instruction should fail, will overflow the buffer
     {
