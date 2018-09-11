@@ -1,0 +1,13 @@
+version: 1.0.{build}
+image: Ubuntu
+build_script:
+- sh: >-
+    mkdir build
+
+    cd build
+
+    cmake ..
+
+    make
+test_script:
+- sh: ./emu8080_tests

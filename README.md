@@ -1,11 +1,13 @@
 # Drakeor's 8080 Emulator
 [![Build Status](https://travis-ci.org/drakeor/drakeor-8080-emulator.svg?branch=master)](https://travis-ci.org/drakeor/drakeor-8080-emulator)
+[![Build status](https://ci.appveyor.com/api/projects/status/i08x5bxqyr53cyk9?svg=true)](https://ci.appveyor.com/project/drakeor/drakeor-8080-emulator)
 
 Yet another Intel 8080 emulator written in C. 
 It's built to run on one of my micro controllers hence the small footprint.
 I built it to run Space Invaders for a project I'm working on.
 
 # Build Instructions
+Tested to work on Ubuntu 16.04 / 18.04.
 Run `./build.sh`
 
 Run `/build/emu8080_tests` to insure all tests pass
