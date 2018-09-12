@@ -4,6 +4,7 @@
 #include "../cpu.h"
 
 MunitResult
+    test_cpuprocess_31(const MunitParameter params[], void* fixture);
+MunitResult
     test_cpuprocess_C3(const MunitParameter params[], void* fixture);
-
 #endif

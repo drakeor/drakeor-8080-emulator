@@ -28,6 +28,8 @@ MunitTest tests[] = {
 
     {"/cpu_process/C3",test_cpuprocess_C3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/31",test_cpuprocess_31, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

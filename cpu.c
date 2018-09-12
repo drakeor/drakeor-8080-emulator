@@ -1,6 +1,7 @@
 #include "cpu.h"
 
 #define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); return -1; }
+#define CHECK_BUFFER(x) { if(cpu->PC+x >= prom_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 
 int init_cpu(struct cpustate* cpu) {
     // Set the PC register to PROGRAM_START
@@ -37,10 +38,16 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
             cpu->PC += 1;
             break;
 
+        // 0x31 = LXI SP, word
+        case 0x31:
+            CHECK_BUFFER(2);
+            cpu->SP = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            cpu->PC += 3;
+            break;
+
         // 0xC3 = JMP 0x0000 
         case 0xC3:
-            if(cpu->PC+2 >= prom_size)
-                PANIC("C3 instruction overflows buffer");
+            CHECK_BUFFER(2);
             tmp = prom[cpu->PC+1] 
                 + (prom[cpu->PC+2] << 8);
             if(tmp >= prom_size)
