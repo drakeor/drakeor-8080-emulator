@@ -13,7 +13,8 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
     printf("%04X: %02X ", *counter, buffer[*counter]);
     switch(buffer[*counter]) {
         case 0x00: PRINT_OP("NOP"); break;
-        case 0x31: PRINT_WORD("LXI"); break;
+        case 0x06: PRINT_BYTE("LD B,"); break;
+        case 0x31: PRINT_WORD("LX SP,"); break;
         case 0xC3: PRINT_WORD("JMP"); break;
         default:
             PRINT_OP("???");
