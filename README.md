@@ -1,6 +1,7 @@
 # Drakeor's 8080 Emulator
 [![Build Status](https://travis-ci.org/drakeor/drakeor-8080-emulator.svg?branch=master)](https://travis-ci.org/drakeor/drakeor-8080-emulator)
 [![Build status](https://ci.appveyor.com/api/projects/status/i08x5bxqyr53cyk9?svg=true)](https://ci.appveyor.com/project/drakeor/drakeor-8080-emulator)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a6b0c7e331404e80b7986656ad0395a1)](https://www.codacy.com/app/drakeor.dragon/drakeor-8080-emulator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=drakeor/drakeor-8080-emulator&amp;utm_campaign=Badge_Grade)
 
 Yet another Intel 8080 emulator written in C. 
 It's built to run on one of my micro controllers hence the small footprint.

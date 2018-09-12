@@ -38,6 +38,8 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
             cpu->PC += 1;
             break;
 
+        /* LOAD commands */
+
         // 0x31 = LXI SP, word
         case 0x31:
             CHECK_BUFFER(2);
