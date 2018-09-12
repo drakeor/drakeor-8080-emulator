@@ -39,7 +39,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
             break;
 
         /* 
-         * LOAD commands 
+         * LD bytes to registers 
          */
 
         // LOAD A, byte
@@ -93,15 +93,39 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
 
 
         /* 
-         * 16-bit LOAD instructions 
+         * LXI - words to registers 
          */
+        // 0x01 = LXI BC, word
+        case 0x01:
+            CHECK_BUFFER(2);
+            cpu->BC = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            cpu->PC += 3;
+            break;
 
+        // 0x11 = LXI DE, word
+        case 0x11:
+            CHECK_BUFFER(2);
+            cpu->DE = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            cpu->PC += 3;
+            break;
+
+        // 0x21 = LXI HL, word
+        case 0x21:
+            CHECK_BUFFER(2);
+            cpu->HL = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            cpu->PC += 3;
+            break;
+            
         // 0x31 = LXI SP, word
         case 0x31:
             CHECK_BUFFER(2);
             cpu->SP = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
             cpu->PC += 3;
             break;
+
+        /*
+         * Jumps
+         */
 
         // 0xC3 = JMP 0x0000 
         case 0xC3:

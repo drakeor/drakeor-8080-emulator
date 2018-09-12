@@ -29,7 +29,8 @@ MunitResult
         return MUNIT_OK;
 }
 
-// Tests all opcodes. Makes sure nothing crashes the function
+// Tests all opcodes. Makes sure nothing crashes the function. 
+// Note that this will spit out a bunch of buffer overflows
 MunitResult
     test_op_to_text_all(const MunitParameter params[], void* fixture)
 {

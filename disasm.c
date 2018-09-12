@@ -18,6 +18,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
     switch(buffer[*counter]) {
         case 0x00: PRINT_OP("NOP"); break;
 
+        //LD bytes to registers 
         case 0x3E: PRINT_BYTE("LD A,"); break;
         case 0x06: PRINT_BYTE("LD B,"); break;
         case 0x0E: PRINT_BYTE("LD C,"); break;
@@ -26,8 +27,16 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x26: PRINT_BYTE("LD H,"); break;
         case 0x2E: PRINT_BYTE("LD L,"); break;
 
+        // LXI - words to registers 
+        case 0x01: PRINT_WORD("LX BC,"); break;
+        case 0x11: PRINT_WORD("LX DE,"); break;
+        case 0x21: PRINT_WORD("LX HL,"); break;
         case 0x31: PRINT_WORD("LX SP,"); break;
+
+        // Jumps
         case 0xC3: PRINT_WORD("JMP"); break;
+
+        // Unknown
         default:
             PRINT_OP("???");
             res = -1;
