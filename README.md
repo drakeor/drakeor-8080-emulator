@@ -24,7 +24,7 @@ This will generate a .h file in the roms folder. Open main.c and change the #inc
 Uses [MUnit](https://github.com/nemequ/munit) for unit testing.
 
 # Reference Links
-[Intel 8085 Opcode Table](http://www.eazynotes.com/notes/microprocessor/notes/opcodes-table-of-intel-8085.pdf)
+[Intel 8080 Opcodes](http://nemesis.lonestar.org/computers/tandy/software/apps/m4/qd/opcodes.html)
 
 [Intel 8080 Instruction Set](http://www.pastraiser.com/cpu/i8080/i8080_opcodes.html)
 

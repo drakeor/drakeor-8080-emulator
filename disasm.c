@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "disasm.h"
 #define CHECK_BUFFER(x) { if((*counter)+x >= buffer_size) { printf("\nbuffer overflow\n"); return -2; }};
+#define PRINT_WORD(x) { CHECK_BUFFER(2); printf("%s 0x%02X%02X", x, buffer[(*counter)+1], buffer[(*counter)+2]); *counter += 3; };
+#define PRINT_BYTE(x) { CHECK_BUFFER(1); printf("%s 0x%02X", x, buffer[(*counter)+1]);  *counter += 2; };
+#define PRINT_OP(x) { printf("%s", x); *counter += 1; }
 
 int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
 {
@@ -9,18 +12,11 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
 
     printf("%04X: %02X ", *counter, buffer[*counter]);
     switch(buffer[*counter]) {
-        case 0x00:
-            printf("NOP");
-            *counter += 1;
-            break;
-        case 0xC3:
-            CHECK_BUFFER(2);
-            printf("JMP 0x%02X%02X", buffer[(*counter)+1], buffer[(*counter)+2]);
-            *counter += 1;
-            break;
+        case 0x00: PRINT_OP("NOP"); break;
+        case 0x31: PRINT_WORD("LXI"); break;
+        case 0xC3: PRINT_WORD("JMP"); break;
         default:
-            printf("???");
-            *counter += 1;
+            PRINT_OP("???");
             res = -1;
     }
     printf("\n");
