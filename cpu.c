@@ -38,7 +38,63 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
             cpu->PC += 1;
             break;
 
-        /* LOAD commands */
+        /* 
+         * LOAD commands 
+         */
+
+        // LOAD A, byte
+        case 0x3E:
+            CHECK_BUFFER(1);
+            cpu->A = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+        // LOAD B, byte
+        case 0x06:
+            CHECK_BUFFER(1);
+            cpu->B = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+        // LOAD C, byte
+        case 0x0E:
+            CHECK_BUFFER(1);
+            cpu->C = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+        // LOAD D, byte
+        case 0x16:
+            CHECK_BUFFER(1);
+            cpu->D = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+        // LOAD E, byte
+        case 0x1E:
+            CHECK_BUFFER(1);
+            cpu->E = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+        // LOAD H, byte
+        case 0x26:
+            CHECK_BUFFER(1);
+            cpu->H = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+        // LOAD L, byte
+        case 0x2E:
+            CHECK_BUFFER(1);
+            cpu->L = prom[cpu->PC+1];
+            cpu->PC += 2;
+            break;
+
+
+        /* 
+         * 16-bit LOAD instructions 
+         */
 
         // 0x31 = LXI SP, word
         case 0x31:

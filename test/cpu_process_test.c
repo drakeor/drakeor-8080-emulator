@@ -2,14 +2,8 @@
 #include "../cpu.h"
 #include "cpu_process_test.h"
 
-#define TEST_LD_BYTE(x, y) {  \
-    init_cpu(&cpu); unsigned char program[2] = { x, 0xAA }; \
-    munit_assert_int(res, ==, 0); munit_assert_int(y, ==, 0xAA); } \
-    { init_cpu(&cpu); unsigned char program[1] = { x }; \
-    munit_assert_int(res, ==, -1); munit_assert_int(y, ==, 0); };
-
 // Helper function for ld bytes
-void assert_ld_byte(struct cpustate* cpu, char opcode, char* reg)
+void assert_ld_byte(struct cpustate* cpu, unsigned char opcode, unsigned char* reg)
 {
     unsigned char program_good[2] = { opcode, 0xAA };
     unsigned char program_bad[1] = { opcode };
@@ -20,14 +14,16 @@ void assert_ld_byte(struct cpustate* cpu, char opcode, char* reg)
         int res = process_cpu(cpu, program_good, 2);
         munit_assert_int(res, ==, 0);
         munit_assert_int(*reg, ==, 0xAA);
+        munit_assert_int((*cpu).PC, ==, 2);
     }   
 
     // Check for buffer overflow
     {
         init_cpu(cpu);
         int res = process_cpu(cpu, program_bad, 1);
-        munit_assert_int(res, ==, 0);
-        munit_assert_int(*reg, ==, 0xAA);
+        munit_assert_int(res, ==, -1);
+        munit_assert_int(*reg, !=, 0xAA);
+        munit_assert_int((*cpu).PC, ==, 0);
     }   
 }
 
