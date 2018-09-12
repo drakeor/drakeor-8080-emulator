@@ -2,6 +2,10 @@
 #include "../cpu.h"
 #include "cpu_process_test.h"
 
+/* 
+ * LD bytes to registers 
+ */
+
 // Helper function for ld bytes
 void assert_ld_byte(struct cpustate* cpu, unsigned char opcode, unsigned char* reg)
 {
@@ -27,6 +31,7 @@ void assert_ld_byte(struct cpustate* cpu, unsigned char opcode, unsigned char* r
     }   
 }
 
+// Load to register A
 MunitResult
     test_cpuprocess_3E(const MunitParameter params[], void* fixture)
 {
@@ -34,7 +39,7 @@ MunitResult
     assert_ld_byte(&cpu, 0x3E, &(cpu.A));
 }
 
-
+// Load to register B
 MunitResult
     test_cpuprocess_06(const MunitParameter params[], void* fixture)
 {
@@ -42,7 +47,7 @@ MunitResult
     assert_ld_byte(&cpu, 0x06, &(cpu.B));
 }
 
-
+// Load to register C
 MunitResult
     test_cpuprocess_0E(const MunitParameter params[], void* fixture)
 {
@@ -50,6 +55,7 @@ MunitResult
     assert_ld_byte(&cpu, 0x0E, &(cpu.C));
 }
 
+// Load to register D
 MunitResult
     test_cpuprocess_16(const MunitParameter params[], void* fixture)
 {
@@ -57,6 +63,7 @@ MunitResult
     assert_ld_byte(&cpu, 0x16, &(cpu.D));
 }
 
+// Load to register E
 MunitResult
     test_cpuprocess_1E(const MunitParameter params[], void* fixture)
 {
@@ -64,6 +71,7 @@ MunitResult
     assert_ld_byte(&cpu, 0x1E, &(cpu.E));
 }
 
+// Load to register H
 MunitResult
     test_cpuprocess_26(const MunitParameter params[], void* fixture)
 {
@@ -71,6 +79,7 @@ MunitResult
     assert_ld_byte(&cpu, 0x26, &(cpu.H));
 }
 
+// Load to register L
 MunitResult
     test_cpuprocess_2E(const MunitParameter params[], void* fixture)
 {
@@ -78,32 +87,74 @@ MunitResult
     assert_ld_byte(&cpu, 0x2E, &(cpu.L));
 }
 
-MunitResult
-    test_cpuprocess_31(const MunitParameter params[], void* fixture)
+/* 
+ * LXI - words to registers 
+ */
+
+// Helper function
+void assert_lxi_word(struct cpustate* cpu, unsigned char opcode, uint16_t* reg)
 {
-    
-    // Setup CPU
-    struct cpustate cpu;
+    unsigned char program_good[3] = { opcode, 0xAA, 0xBB};
+    unsigned char program_bad[1] = { opcode };
 
     // LXI instruction should set the SP to 0xBBAA
+    // Make sure bytes line up
     {
-        init_cpu(&cpu);
-        unsigned char program[3] = { 0x31, 0xAA, 0xBB };
-        int res = process_cpu(&cpu, program, 3);
+        init_cpu(cpu);
+        int res = process_cpu(cpu, program_good, 3);
         munit_assert_int(res, ==, 0);
-        munit_assert_int(cpu.SP, ==, 0xBBAA);
-    }
+        munit_assert_int(*reg, ==, 0xBBAA);
+        munit_assert_int((*cpu).PC, ==, 3);
+    }   
 
     // LXI instruction should fail, will overflow the buffer
     {
-        init_cpu(&cpu);
-        unsigned char program[2] = { 0x31, 0x01 };
-        int res = process_cpu(&cpu, program, 2);
+        init_cpu(cpu);
+        (*reg) = 0; // We're setting it to zero since stack pointer isnt 0 by default
+        int res = process_cpu(cpu, program_bad, 1);
         munit_assert_int(res, ==, -1);
-        munit_assert_int(cpu.SP, ==, STACK_START);
-    }
+        munit_assert_int(*reg, !=, 0xBBAA);
+        munit_assert_int((*cpu).PC, ==, 0);
+    }   
 }
 
+// Load word  to BC
+MunitResult
+    test_cpuprocess_01(const MunitParameter params[], void* fixture)
+{
+    // Setup CPU
+    struct cpustate cpu;
+    assert_lxi_word(&cpu, 0x01, &(cpu.BC));
+}
+
+// Load word  to DE
+MunitResult
+    test_cpuprocess_11(const MunitParameter params[], void* fixture)
+{
+    // Setup CPU
+    struct cpustate cpu;
+    assert_lxi_word(&cpu, 0x11, &(cpu.DE));
+}
+
+// Load word  to HL
+MunitResult
+    test_cpuprocess_21(const MunitParameter params[], void* fixture)
+{
+    // Setup CPU
+    struct cpustate cpu;
+    assert_lxi_word(&cpu, 0x21, &(cpu.HL));
+}
+
+// Load word to SP
+MunitResult
+    test_cpuprocess_31(const MunitParameter params[], void* fixture)
+{
+    // Setup CPU
+    struct cpustate cpu;
+    assert_lxi_word(&cpu, 0x31, &(cpu.SP));
+}
+
+// JMP to word
 MunitResult
     test_cpuprocess_C3(const MunitParameter params[], void* fixture)
 {    

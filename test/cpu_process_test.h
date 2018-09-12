@@ -22,8 +22,14 @@ MunitResult
     test_cpuprocess_2E(const MunitParameter params[], void* fixture);
 
 /* 
- * LD words to registers 
+ * LXI - words to registers 
  */
+MunitResult
+    test_cpuprocess_01(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_11(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_21(const MunitParameter params[], void* fixture);
 MunitResult
     test_cpuprocess_31(const MunitParameter params[], void* fixture);
 

@@ -10,6 +10,10 @@
 
 // List of tests
 MunitTest tests[] = {
+
+    /*
+     * Disassembly and op_to_text operations
+     */
     {"/disasm/op_to_text", test_op_to_text, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/disasm/op_to_text_all", test_op_to_text_all, 
@@ -17,6 +21,9 @@ MunitTest tests[] = {
     {"/disasm/disassembly", test_disassembly, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * CPU Logic
+     */
     {"/cpu/cpuinit", test_initcpu, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu/cpuinit_reset", test_initcpu_reset, 
@@ -26,6 +33,9 @@ MunitTest tests[] = {
     {"/cpu/dump_registers", test_dump_registers, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /* 
+    * LD bytes to registers 
+    */
     {"/cpu_process/3E",test_cpuprocess_3E, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu_process/06",test_cpuprocess_06, 
@@ -41,11 +51,23 @@ MunitTest tests[] = {
     {"/cpu_process/2E",test_cpuprocess_2E, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
-    {"/cpu_process/C3",test_cpuprocess_C3, 
+    /* 
+    * LXI - words to registers 
+    */
+   {"/cpu_process/01",test_cpuprocess_01, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/11",test_cpuprocess_11, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/21",test_cpuprocess_21, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu_process/31",test_cpuprocess_31, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    // Jump instruction
+    {"/cpu_process/C3",test_cpuprocess_C3, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
+    // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 
