@@ -138,17 +138,19 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
          */
 
         // 0xCD = CALL addr 
-        case 0xCD:
+        /*case 0xCD:
             GET_WORD(tmp);
             if(tmp >= prom_size)
                 PANIC("CD instruction jumped outside memory bounds");
+            if(cpu->SP > prom_size)
+                PANIC("CD instruction has SP that overflows memory bounds");
             if(cpu->SP < 2)
-                PANIC("CD instruction will underflow");
+                PANIC("CD instruction will underflow stack pointer");
             prom[cpu->SP - 1] = (0xFF00 & cpu->PC) >> 8;
             prom[cpu->SP - 2] = (0xFF & cpu->PC);
             cpu->SP -= 2;
             cpu->PC = tmp; 
-            break;
+            break;*/
         
 
         // Panic if we don't know the instruction
