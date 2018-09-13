@@ -2,54 +2,33 @@
 #include "../cpu.h"
 #include "cpu_process_test.h"
 
-// Size of system memory
-#define TEST_MEMORY_SIZE 0x4000
-
-// Size of the protected rom area
-#define TEST_ROM_SIZE 0x2000
-
-// Size of the rom setting
-// Stack usually starts on the bottom
-#define TEST_STACK_START TEST_MEMORY_SIZE
-
-// Access tests with low and high part of memory.
-// Set these within bounds of TEST_MEMORY_SIZE and outside the bounds of TEST_ROM_SIZE
-// or some tests will fail
-#define TEST_MEMORY_L 0xBB
-#define TEST_MEMORY_H 0x20
-#define TEST_MEMORY_HL ((TEST_MEMORY_H << 8) | TEST_MEMORY_L)
-#define TEST_MEMORY_LH ((TEST_MEMORY_L << 8) | TEST_MEMORY_H)
-
-// Access to out of bounds area of memory.
-// Set this outside of TEST_MEMORY_SIZE
-// or some tests will fail
-#define TEST_MEMORY_OOB_L 0xFF
-#define TEST_MEMORY_OOB_H 0xFF
-
-// Access to the ROM area.
-// Set this within the bounds of TEST_ROM_SIZE
-// or some tests will fail
-#define TEST_MEMORY_ROM_L 0x20
-#define TEST_MEMORY_ROM_H 0x20
 
 /*
  *  Test helper helper functions
  */
 
+// Use our parameters versus default 
+int test_init_cpu(struct cpustate* cpu) {
+    int res = init_cpu(cpu);
+
+    cpu->PC = 0;
+    cpu->SP = STACK_START;
+}
+
 // Makes sure failure occurs when it jumps outside memory bounds
-void test_overflow_byte(struct cpustate* cpu, unsigned char opcode)
+void test_overflow_byte(struct cpustate* cpu, uint8_t opcode)
 {
-    init_cpu(cpu);
-    unsigned char program_bad[1] = { opcode };
+    test_init_cpu(cpu);
+    uint8_t program_bad[1] = { opcode };
     int res = process_cpu(cpu, program_bad, 1);
     munit_assert_int(res, ==, -1);
 }
 
 // Makes sure failure occurs when it jumps outside memory bounds
-void test_overflow_word(struct cpustate* cpu, unsigned char opcode)
+void test_overflow_word(struct cpustate* cpu, uint8_t opcode)
 {
-    init_cpu(cpu);
-    unsigned char program_bad[2] = { opcode, 0x00 };
+    test_init_cpu(cpu);
+    uint8_t program_bad[2] = { opcode, 0x00 };
     int res = process_cpu(cpu, program_bad, 2);
     munit_assert_int(res, ==, -1);
 }
@@ -59,24 +38,24 @@ void test_overflow_word(struct cpustate* cpu, unsigned char opcode)
  */
 
 // Helper function for LXI words
-void assert_lxi_word(struct cpustate* cpu, unsigned char opcode, uint16_t* reg)
+void assert_lxi_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 {
-    unsigned char program_good[3] = { opcode, TEST_MEMORY_L, TEST_MEMORY_H};
-    unsigned char program_bad[1] = { opcode };
+    uint8_t program_good[3] = { opcode, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H};
+    uint8_t program_bad[1] = { opcode };
 
     // LXI instruction should set the SP to 0xBBAA
     // Make sure bytes line up
     {
-        init_cpu(cpu);
+        test_init_cpu(cpu);
         int res = process_cpu(cpu, program_good, 3);
         munit_assert_int(res, ==, 0);
-        munit_assert_int(*reg, ==, TEST_MEMORY_HL);
+        munit_assert_int(*reg, ==, TEST_MEMORY_RAM_HL);
         munit_assert_int((*cpu).PC, ==, 3);
     }   
 
     // LXI instruction should fail, will overflow the buffer
     {
-        init_cpu(cpu);
+        test_init_cpu(cpu);
         (*reg) = 0; // We're setting it to zero since stack pointer isnt 0 by default
         int res = process_cpu(cpu, program_bad, 1);
         munit_assert_int(res, ==, -1);
@@ -86,13 +65,13 @@ void assert_lxi_word(struct cpustate* cpu, unsigned char opcode, uint16_t* reg)
 }
 
 // Helper function for LD bytes
-void assert_ld_byte(struct cpustate* cpu, unsigned char opcode, unsigned char* reg)
+void assert_ld_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 {
-    unsigned char program_good[2] = { opcode, 0xAA };
+    uint8_t program_good[2] = { opcode, 0xAA };
     
     // Make sure bytes line up
     {
-        init_cpu(cpu);
+        test_init_cpu(cpu);
         int res = process_cpu(cpu, program_good, 2);
         munit_assert_int(res, ==, 0);
         munit_assert_int(*reg, ==, 0xAA);
@@ -217,8 +196,8 @@ MunitResult
 
     // JMP instruction should set the PC to 0x0002
     {
-        init_cpu(&cpu);
-        unsigned char program[3] = { 0xC3, 0x02, 0x00 };
+        test_init_cpu(&cpu);
+        uint8_t program[3] = { 0xC3, 0x02, 0x00 };
         int res = process_cpu(&cpu, program, 3);
         munit_assert_int(res, ==, 0);
         munit_assert_int(cpu.PC, ==, 0x0002);
@@ -226,19 +205,19 @@ MunitResult
 
     // JMP instruction should set the PC
     {
-        init_cpu(&cpu);
-        unsigned char program[TEST_MEMORY_SIZE] = { 0xC3, TEST_MEMORY_L, TEST_MEMORY_H };
-        int res = process_cpu(&cpu, program, TEST_MEMORY_SIZE);
+        test_init_cpu(&cpu);
+        uint8_t program[MEMORY_SIZE] = { 0xC3, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
+        int res = process_cpu(&cpu, program, MEMORY_SIZE);
         munit_assert_int(res, ==, 0);
-        munit_assert_int(cpu.PC, ==, TEST_MEMORY_HL);
+        munit_assert_int(cpu.PC, ==, TEST_MEMORY_ROM_HL);
     }
 
     test_overflow_word(&cpu, 0xC3);
 
     // JMP instruction should fail, jumping to out of bounds
     {
-        init_cpu(&cpu);
-        unsigned char program[3] = { 0xC3, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H };
+        test_init_cpu(&cpu);
+        uint8_t program[3] = { 0xC3, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H };
         int res = process_cpu(&cpu, program, 3);
         munit_assert_int(res, ==, -1);
         munit_assert_int(cpu.PC, ==, 0x0000);
@@ -256,45 +235,56 @@ MunitResult
 MunitResult
     test_cpuprocess_CD(const MunitParameter params[], void* fixture)
 {
-    // Skipping this for now so I can refactor the code.
-    return MUNIT_SKIP;
 
-    /*
     // Test functionality of CALL
     {
         struct cpustate cpu;
-        init_cpu(&cpu);
-        unsigned char program[TEST_MEMORY_SIZE] = { 0x00, 0xCD, 0x11, 0x22 };
-        process_cpu(&cpu, program, TEST_MEMORY_SIZE); // Process twice to get rid of NOP
-        int res = process_cpu(&cpu, program, TEST_MEMORY_SIZE);
+        test_init_cpu(&cpu);
+        uint8_t program[MEMORY_SIZE] = { 0x00, 0xCD, 0x11, 0x22 };
+        process_cpu(&cpu, program, MEMORY_SIZE); // Process twice to get rid of NOP
+        int res = process_cpu(&cpu, program, MEMORY_SIZE);
         munit_assert_int(res, ==, 0);   // Call should succeed
-        munit_assert_int(cpu.SP, ==, TEST_STACK_START - 2); // Stack pointer should decrease by two
+        munit_assert_int(cpu.SP, ==, STACK_START - 2); // Stack pointer should decrease by two
         munit_assert_int(cpu.PC, ==, 0x2211); // Current PC should point to new address
-        munit_assert_int(program[cpu.SP - 2], ==, 0x01); // Stack - 2 should hold hi of return address
-        munit_assert_int(program[cpu.SP - 1], ==, 0x00); // Stack - 2 should hold lo of return address
+        printf("Memory: 0x%02X 0x%02X\n", program[cpu.SP + 1], program[cpu.SP + 2]);
+        munit_assert_int(program[cpu.SP], ==, 0x00); // Stack should hold hi of return address
+        munit_assert_int(program[cpu.SP + 1], ==, 0x01); // Stack + 1 should hold lo of return address
     }
 
     // Do not allow stack to underflow
     {
         struct cpustate cpu;
-        init_cpu(&cpu);
+        test_init_cpu(&cpu);
         cpu.SP = 0x00;
-        unsigned char program[TEST_MEMORY_SIZE] = { 0x00, 0xCD, 0x11, 0x22 };
-        process_cpu(&cpu, program, TEST_MEMORY_SIZE); // Process twice to get rid of NOP
-        int res = process_cpu(&cpu, program, TEST_MEMORY_SIZE);
+        uint8_t program[MEMORY_SIZE] = { 0x00, 0xCD, 0x11, 0x22 };
+        process_cpu(&cpu, program, MEMORY_SIZE); // Process twice to get rid of NOP
+        int res = process_cpu(&cpu, program, MEMORY_SIZE);
         munit_assert_int(res, ==, -1);   // Call should fail
-        munit_assert_int(cpu.SP, ==, TEST_STACK_START); // Stack pointer should stay the same
+        munit_assert_int(cpu.SP, ==, 0x00); // Stack pointer should stay the same
+    }
+
+    // Do not allow stack to write into ROM
+    {
+        struct cpustate cpu;
+        test_init_cpu(&cpu);
+        cpu.SP = TEST_MEMORY_ROM_HL;
+        uint8_t program[MEMORY_SIZE] = { 0x00, 0xCD, 0x11, 0x22 };
+        process_cpu(&cpu, program, MEMORY_SIZE); // Process twice to get rid of NOP
+        int res = process_cpu(&cpu, program, MEMORY_SIZE);
+        munit_assert_int(res, ==, -1);   // Call should fail
+        munit_assert_int(cpu.SP, ==, TEST_MEMORY_ROM_HL); // Stack pointer should stay the same
     }
 
     // Do not jump out of bounds
     {
         struct cpustate cpu;
-        init_cpu(&cpu);
-        cpu.SP = 0x00;
-        unsigned char program[4] = { 0x00, 0xCD, 0x11, 0x22 };
+        test_init_cpu(&cpu);
+        uint8_t program[4] = { 0x00, 0xCD, 0x11, 0x22 };
         process_cpu(&cpu, program, 4); // Process twice to get rid of NOP
         int res = process_cpu(&cpu, program, 4);
         munit_assert_int(res, ==, -1);   // Call should fail
     }
-    */
+
+    return MUNIT_OK;
+    
 }

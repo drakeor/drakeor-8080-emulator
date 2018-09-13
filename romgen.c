@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "config.h"
 #include "disasm.h"
@@ -40,7 +41,7 @@ int main(int argc, char** argv)
     }
 
     // Start writing into the file
-    fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\n#define ROM_SIZE 0x%X\nstatic char prom[MEMORY_SIZE] = {\n", sz);
+    fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\n#define ROM_SIZE 0x%X\nstatic uint8_t prom[MEMORY_SIZE] = {\n", sz);
 
     // Convert to hex
     unsigned int i = 0;

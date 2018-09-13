@@ -7,10 +7,10 @@
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 
 // Populates x with the next byte of information
-#define GET_BYTE(x) { CHECK_BUFFER(1); x = ram[cpu->PC+1];  };
+#define GET_BYTE(x) { CHECK_BUFFER(1); x = memory[cpu->PC+1];  };
 
 // Populates x with the next word of information with proper memory alignment.
-#define GET_WORD(x) { CHECK_BUFFER(2); x = ram[cpu->PC+1] + (ram[cpu->PC+2] << 8);  };
+#define GET_WORD(x) { CHECK_BUFFER(2); x = memory[cpu->PC+1] + (memory[cpu->PC+2] << 8);  };
 
 int init_cpu(struct cpustate* cpu) {
     // Set the PC register to PROGRAM_START
@@ -29,7 +29,7 @@ int init_cpu(struct cpustate* cpu) {
 }
 
 // Process a CPU instruction
-int process_cpu(struct cpustate* cpu, unsigned char* ram, int memory_size)
+int process_cpu(struct cpustate* cpu, uint8_t* memory, int memory_size)
 {
     // Sanity check
     if(cpu->PC >= memory_size) {
@@ -40,7 +40,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* ram, int memory_size)
     uint16_t tmp;
     tmp = 0;
 
-    switch(ram[cpu->PC]) {
+    switch(memory[cpu->PC]) {
         
         // 0x00 = NOP
         case 0x00:
@@ -138,7 +138,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* ram, int memory_size)
          */
 
         // 0xCD = CALL addr 
-        /*case 0xCD:
+        case 0xCD:
             GET_WORD(tmp);
             if(tmp >= memory_size)
                 PANIC("CD instruction jumped outside memory bounds");
@@ -146,16 +146,18 @@ int process_cpu(struct cpustate* cpu, unsigned char* ram, int memory_size)
                 PANIC("CD instruction has SP that overflows memory bounds");
             if(cpu->SP < 2)
                 PANIC("CD instruction will underflow stack pointer");
-            ram[cpu->SP - 1] = (0xFF00 & cpu->PC) >> 8;
-            ram[cpu->SP - 2] = (0xFF & cpu->PC);
+            if((cpu->SP - 2) < ROM_SIZE)
+                PANIC("CD instruction will write into ROM");
+            memory[cpu->SP - 1] = (0xFF & cpu->PC);
+            memory[cpu->SP - 2] = cpu->PC >> 8;
             cpu->SP -= 2;
             cpu->PC = tmp; 
-            break;*/
+            break;
         
 
         // Panic if we don't know the instruction
         default:
-            printf("Cannot process opcode %02X\n", ram[cpu->PC]);
+            printf("Cannot process opcode %02X\n", memory[cpu->PC]);
             PANIC("opcode not implemented");
     }
     return 0;
