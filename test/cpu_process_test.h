@@ -38,6 +38,22 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_CD(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_C4(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_CC(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_D4(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_DC(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_E4(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_EC(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_F4(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_FC(const MunitParameter params[], void* fixture);
 
 /* 
  * Jump commands 
