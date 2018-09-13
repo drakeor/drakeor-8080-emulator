@@ -200,3 +200,50 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+
+/*
+ * CALL - call function at address
+ */
+
+// Calls a function at an address
+MunitResult
+    test_cpuprocess_CD(const MunitParameter params[], void* fixture)
+{
+    // Test functionality of CALL
+    {
+        struct cpustate cpu;
+        init_cpu(&cpu);
+        unsigned char program[0xFFFF] = { 0x00, 0xCD, 0xAA, 0xFF };
+        process_cpu(&cpu, program, 0xFFFF); // Process twice to get rid of NOP
+        int res = process_cpu(&cpu, program, 0xFFFF);
+        munit_assert_int(res, ==, 0);   // Call should succeed
+        munit_assert_int(cpu.SP, ==, STACK_START - 2); // Stack pointer should decrease by two
+        munit_assert_int(cpu.PC, ==, 0xFFAA); // Current PC should point to new address
+        munit_assert_int(program[cpu.SP - 2], ==, 0x01); // Stack - 2 should hold hi of return address
+        munit_assert_int(program[cpu.SP - 1], ==, 0x00); // Stack - 2 should hold lo of return address
+    }
+
+    // Do not allow stack to underflow
+    {
+        struct cpustate cpu;
+        init_cpu(&cpu);
+        cpu.SP = 0x00;
+        unsigned char program[0xFFFF] = { 0x00, 0xCD, 0xAA, 0xFF };
+        process_cpu(&cpu, program, 0xFFFF); // Process twice to get rid of NOP
+        int res = process_cpu(&cpu, program, 0xFFFF);
+        munit_assert_int(res, ==, -1);   // Call should fail
+        munit_assert_int(cpu.SP, ==, STACK_START); // Stack pointer should stay the same
+    }
+
+    // Do not jump out of bounds
+    {
+        struct cpustate cpu;
+        init_cpu(&cpu);
+        cpu.SP = 0x00;
+        unsigned char program[4] = { 0x00, 0xCD, 0xAA, 0xFF };
+        process_cpu(&cpu, program, 4); // Process twice to get rid of NOP
+        int res = process_cpu(&cpu, program, 4);
+        munit_assert_int(res, ==, -1);   // Call should fail
+    }
+}

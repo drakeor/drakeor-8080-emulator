@@ -67,6 +67,12 @@ MunitTest tests[] = {
     {"/cpu_process/C3",test_cpuprocess_C3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * CALL to address
+     */
+    {"/cpu_process/CD",test_cpuprocess_CD, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

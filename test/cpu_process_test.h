@@ -33,6 +33,12 @@ MunitResult
 MunitResult
     test_cpuprocess_31(const MunitParameter params[], void* fixture);
 
+/*
+ * CALL - call function at address
+ */
+MunitResult
+    test_cpuprocess_CD(const MunitParameter params[], void* fixture);
+
 /* 
  * Jump commands 
  */

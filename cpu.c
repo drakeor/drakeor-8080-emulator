@@ -1,7 +1,16 @@
 #include "cpu.h"
 
+// Helper macro for panic
 #define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); return -1; }
+
+// Helper to check if we have enough program space
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= prom_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
+
+// Populates x with the next byte of information
+#define GET_BYTE(x) { CHECK_BUFFER(1); x = prom[cpu->PC+1];  };
+
+// Populates x with the next word of information with proper memory alignment.
+#define GET_WORD(x) { CHECK_BUFFER(2); x = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);  };
 
 int init_cpu(struct cpustate* cpu) {
     // Set the PC register to PROGRAM_START
@@ -44,50 +53,43 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
 
         // LOAD A, byte
         case 0x3E:
-            CHECK_BUFFER(1);
-            cpu->A = prom[cpu->PC+1];
+            GET_BYTE(cpu->A);
             cpu->PC += 2;
             break;
 
         // LOAD B, byte
         case 0x06:
-            CHECK_BUFFER(1);
-            cpu->B = prom[cpu->PC+1];
+            GET_BYTE(cpu->B);
             cpu->PC += 2;
             break;
 
         // LOAD C, byte
         case 0x0E:
-            CHECK_BUFFER(1);
-            cpu->C = prom[cpu->PC+1];
+            GET_BYTE(cpu->C);
             cpu->PC += 2;
             break;
 
         // LOAD D, byte
         case 0x16:
-            CHECK_BUFFER(1);
-            cpu->D = prom[cpu->PC+1];
+            GET_BYTE(cpu->D);
             cpu->PC += 2;
             break;
 
         // LOAD E, byte
         case 0x1E:
-            CHECK_BUFFER(1);
-            cpu->E = prom[cpu->PC+1];
+            GET_BYTE(cpu->E);
             cpu->PC += 2;
             break;
 
         // LOAD H, byte
         case 0x26:
-            CHECK_BUFFER(1);
-            cpu->H = prom[cpu->PC+1];
+            GET_BYTE(cpu->H);
             cpu->PC += 2;
             break;
 
         // LOAD L, byte
         case 0x2E:
-            CHECK_BUFFER(1);
-            cpu->L = prom[cpu->PC+1];
+            GET_BYTE(cpu->L);
             cpu->PC += 2;
             break;
 
@@ -97,29 +99,25 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
          */
         // 0x01 = LXI BC, word
         case 0x01:
-            CHECK_BUFFER(2);
-            cpu->BC = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            GET_WORD(cpu->BC);
             cpu->PC += 3;
             break;
 
         // 0x11 = LXI DE, word
         case 0x11:
-            CHECK_BUFFER(2);
-            cpu->DE = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            GET_WORD(cpu->DE);
             cpu->PC += 3;
             break;
 
         // 0x21 = LXI HL, word
         case 0x21:
-            CHECK_BUFFER(2);
-            cpu->HL = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            GET_WORD(cpu->HL);
             cpu->PC += 3;
             break;
-            
+
         // 0x31 = LXI SP, word
         case 0x31:
-            CHECK_BUFFER(2);
-            cpu->SP = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);
+            GET_WORD(cpu->SP);
             cpu->PC += 3;
             break;
 
@@ -129,13 +127,29 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
 
         // 0xC3 = JMP 0x0000 
         case 0xC3:
-            CHECK_BUFFER(2);
-            tmp = prom[cpu->PC+1] 
-                + (prom[cpu->PC+2] << 8);
+            GET_WORD(tmp);
             if(tmp >= prom_size)
                 PANIC("C3 instruction jumped outside memory bounds");
             cpu->PC = tmp;
             break;
+
+        /*
+         * Calls
+         */
+
+        // 0xCD = CALL addr 
+        case 0xCD:
+            GET_WORD(tmp);
+            if(tmp >= prom_size)
+                PANIC("CD instruction jumped outside memory bounds");
+            if(cpu->SP < 2)
+                PANIC("CD instruction will underflow");
+            prom[cpu->SP - 1] = (0xFF00 & cpu->PC) >> 8;
+            prom[cpu->SP - 2] = (0xFF & cpu->PC);
+            cpu->SP -= 2;
+            cpu->PC = tmp; 
+            break;
+        
 
         // Panic if we don't know the instruction
         default:
