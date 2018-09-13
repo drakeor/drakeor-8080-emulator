@@ -4,13 +4,13 @@
 #define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); return -1; }
 
 // Helper to check if we have enough program space
-#define CHECK_BUFFER(x) { if(cpu->PC+x >= prom_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
+#define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 
 // Populates x with the next byte of information
-#define GET_BYTE(x) { CHECK_BUFFER(1); x = prom[cpu->PC+1];  };
+#define GET_BYTE(x) { CHECK_BUFFER(1); x = ram[cpu->PC+1];  };
 
 // Populates x with the next word of information with proper memory alignment.
-#define GET_WORD(x) { CHECK_BUFFER(2); x = prom[cpu->PC+1] + (prom[cpu->PC+2] << 8);  };
+#define GET_WORD(x) { CHECK_BUFFER(2); x = ram[cpu->PC+1] + (ram[cpu->PC+2] << 8);  };
 
 int init_cpu(struct cpustate* cpu) {
     // Set the PC register to PROGRAM_START
@@ -29,10 +29,10 @@ int init_cpu(struct cpustate* cpu) {
 }
 
 // Process a CPU instruction
-int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
+int process_cpu(struct cpustate* cpu, unsigned char* ram, int memory_size)
 {
     // Sanity check
-    if(cpu->PC >= prom_size) {
+    if(cpu->PC >= memory_size) {
         PANIC("pc counter overflowed");
     }
     
@@ -40,7 +40,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
     uint16_t tmp;
     tmp = 0;
 
-    switch(prom[cpu->PC]) {
+    switch(ram[cpu->PC]) {
         
         // 0x00 = NOP
         case 0x00:
@@ -128,7 +128,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
         // 0xC3 = JMP 0x0000 
         case 0xC3:
             GET_WORD(tmp);
-            if(tmp >= prom_size)
+            if(tmp >= memory_size)
                 PANIC("C3 instruction jumped outside memory bounds");
             cpu->PC = tmp;
             break;
@@ -140,14 +140,14 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
         // 0xCD = CALL addr 
         /*case 0xCD:
             GET_WORD(tmp);
-            if(tmp >= prom_size)
+            if(tmp >= memory_size)
                 PANIC("CD instruction jumped outside memory bounds");
-            if(cpu->SP > prom_size)
+            if(cpu->SP > memory_size)
                 PANIC("CD instruction has SP that overflows memory bounds");
             if(cpu->SP < 2)
                 PANIC("CD instruction will underflow stack pointer");
-            prom[cpu->SP - 1] = (0xFF00 & cpu->PC) >> 8;
-            prom[cpu->SP - 2] = (0xFF & cpu->PC);
+            ram[cpu->SP - 1] = (0xFF00 & cpu->PC) >> 8;
+            ram[cpu->SP - 2] = (0xFF & cpu->PC);
             cpu->SP -= 2;
             cpu->PC = tmp; 
             break;*/
@@ -155,7 +155,7 @@ int process_cpu(struct cpustate* cpu, unsigned char* prom, int prom_size)
 
         // Panic if we don't know the instruction
         default:
-            printf("Cannot process opcode %02X\n", prom[cpu->PC]);
+            printf("Cannot process opcode %02X\n", ram[cpu->PC]);
             PANIC("opcode not implemented");
     }
     return 0;

@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "disasm.h"
-
-// Give our rom 8KB ram.
-#define PROM_SIZE 0x2000
 
 // This program uses 
 int main(int argc, char** argv)
@@ -20,8 +18,8 @@ int main(int argc, char** argv)
     fseek(f, 0, SEEK_END);
     int sz = ftell(f);
     fseek(f, 0, SEEK_SET);
-    if(sz > PROM_SIZE) {
-        printf("Error. ROM of size 0x%X overflows PROM_SIZE of size 0x%X", sz, PROM_SIZE);
+    if(sz > MEMORY_SIZE) {
+        printf("Error. ROM of size 0x%X overflows MEMORY_SIZE of size 0x%X", sz, MEMORY_SIZE);
         exit(1);
     }
 
@@ -42,11 +40,11 @@ int main(int argc, char** argv)
     }
 
     // Start writing into the file
-    fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\n#define PROGRAM_SIZE 0x%X\nstatic char prom[PROGRAM_SIZE] = {\n", PROM_SIZE);
+    fprintf(fw, "#ifndef ROMGEN_H\n#define ROMGEN_H\n#define ROM_SIZE 0x%X\nstatic char prom[MEMORY_SIZE] = {\n", sz);
 
     // Convert to hex
     unsigned int i = 0;
-    for(i = 0; i < PROM_SIZE; i++) {
+    for(i = 0; i < sz; i++) {
         // Line break and show offset
         if(i % 8 == 0) {
             fprintf(fw, "\n");
@@ -59,7 +57,7 @@ int main(int argc, char** argv)
             fprintf(fw, "0x00");
 
         // Don't add a comma at the end
-        if(i < PROM_SIZE-1)
+        if(i < MEMORY_SIZE-1)
             fprintf(fw,", ");
     } 
 

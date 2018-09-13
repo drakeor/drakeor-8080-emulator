@@ -17,9 +17,9 @@ int main()
     do {
         // Need to copy the PC since op_to_name advances it.
         int tPC = cpu.PC;
-        op_to_text(prom, PROGRAM_SIZE, &tPC);
+        op_to_text(prom, ROM_SIZE, &tPC);
 
-    } while(!process_cpu(&cpu, prom, PROGRAM_SIZE));
+    } while(!process_cpu(&cpu, prom, MEMORY_SIZE));
 
     return 0;
 }
