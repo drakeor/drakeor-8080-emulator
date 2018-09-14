@@ -64,7 +64,7 @@ struct cpustate {
 
 // Returns a new cpu instance
 int init_cpu(struct cpustate* cpu);
-int process_cpu(struct cpustate* cpu, uint8_t* memory, int memory_size);
+int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size);
 int dump_registers(struct cpustate* cpu);
 
 #endif

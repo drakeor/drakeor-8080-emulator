@@ -1,17 +1,44 @@
 #include "cpu.h"
 
+/*
+ * Helper macros
+ */
 // Helper macro for panic
 #define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); return -1; }
-
 // Helper to check if we have enough program space
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
-
 // Populates x with the next byte of information
 #define GET_BYTE(x) { CHECK_BUFFER(1); x = memory[cpu->PC+1];  };
-
 // Populates x with the next word of information with proper memory alignment.
 #define GET_WORD(x) { CHECK_BUFFER(2); x = memory[cpu->PC+1] + (memory[cpu->PC+2] << 8);  };
 
+
+/*
+ * Helper functions
+ */
+
+// Helper function for call instructions
+int do_call_inst(struct cpustate* cpu, uint8_t opcode, uint8_t* memory, uint16_t memory_size)
+{
+    uint16_t tmp;
+    GET_WORD(tmp);
+    if(tmp >= memory_size)
+        PANIC("%02X instruction jumped outside memory bounds", opcode);
+    if(cpu->SP > memory_size)
+        PANIC("%02X instruction has SP that overflows memory bounds", opcode);
+    if(cpu->SP < 2)
+        PANIC("%02X instruction will underflow stack pointer", opcode);
+    if((cpu->SP - 2) < ROM_SIZE)
+        PANIC("%02X instruction will write into ROM", opcode);
+    memory[cpu->SP - 1] = (0xFF & cpu->PC);
+    memory[cpu->SP - 2] = cpu->PC >> 8;
+    cpu->SP -= 2;
+    cpu->PC = tmp; 
+
+    return 0;
+}
+
+// Resets the CPU
 int init_cpu(struct cpustate* cpu) {
     // Set the PC register to PROGRAM_START
     // Set SP to start at 0xF000
@@ -29,7 +56,7 @@ int init_cpu(struct cpustate* cpu) {
 }
 
 // Process a CPU instruction
-int process_cpu(struct cpustate* cpu, uint8_t* memory, int memory_size)
+int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 {
     // Sanity check
     if(cpu->PC >= memory_size) {
@@ -136,22 +163,28 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, int memory_size)
         /*
          * Calls
          */
+        
+        // 0xC4 = CALL addr if Z is 1
+        case 0xC4:
+            CHECK_BUFFER(2);
+            if(cpu->FLAGS.Z)
+                return do_call_inst(cpu, 0xC4, memory, memory_size);
+            cpu->PC += 3;
+            break;
+
+        // 0xCC = CALL addr if Z is 0
+        case 0xCC:
+            CHECK_BUFFER(2);
+            if(!cpu->FLAGS.Z)
+                return do_call_inst(cpu, 0xCC, memory, memory_size);
+            cpu->PC += 3;
+            break;
+
+        
 
         // 0xCD = CALL addr 
         case 0xCD:
-            GET_WORD(tmp);
-            if(tmp >= memory_size)
-                PANIC("CD instruction jumped outside memory bounds");
-            if(cpu->SP > memory_size)
-                PANIC("CD instruction has SP that overflows memory bounds");
-            if(cpu->SP < 2)
-                PANIC("CD instruction will underflow stack pointer");
-            if((cpu->SP - 2) < ROM_SIZE)
-                PANIC("CD instruction will write into ROM");
-            memory[cpu->SP - 1] = (0xFF & cpu->PC);
-            memory[cpu->SP - 2] = cpu->PC >> 8;
-            cpu->SP -= 2;
-            cpu->PC = tmp; 
+            return do_call_inst(cpu, 0xCD, memory, memory_size);
             break;
         
 

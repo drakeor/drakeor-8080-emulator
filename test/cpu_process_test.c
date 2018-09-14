@@ -83,20 +83,11 @@ void assert_ld_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 void assert_call_function_true(struct cpustate* cpu, uint8_t opcode)
 {
     // Call if that flag is true
-    {
-        uint8_t program[4] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        process_cpu(cpu, program, 4); // Process twice to get rid of NOP
-        int res = process_cpu(cpu, program, 4);
-        munit_assert_int(res, ==, -1);   // Call should succeed
-        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-    }
-
-    // Ensure there is no overflow
-    {
-        struct cpustate cpu2;
-        test_overflow_word(&cpu2, opcode);
-    }
+    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
+    int res = process_cpu(cpu, program, MEMORY_SIZE);
+    munit_assert_int(res, ==, 0);   // Call should succeed
+    munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
+    munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
 }
 
 // Helper function for call functions
@@ -104,20 +95,11 @@ void assert_call_function_true(struct cpustate* cpu, uint8_t opcode)
 void assert_call_function_false(struct cpustate* cpu, uint8_t opcode)
 {
     // Do not call if that flag is false
-    {
-        uint8_t program[4] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        process_cpu(cpu, program, 4); // Process twice to get rid of NOP
-        int res = process_cpu(cpu, program, 4);
-        munit_assert_int(res, ==, -1);   // Call should succeed
-        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-    }
-
-    // Ensure there is no overflow
-    {
-        struct cpustate cpu2;
-        test_overflow_word(&cpu2, opcode);
-    }
+    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
+    int res = process_cpu(cpu, program, MEMORY_SIZE);
+    munit_assert_int(res, ==, 0);   // Call should succeed
+    munit_assert_int(cpu->SP, ==, STACK_START); // Stack pointer shouldn't decrease by two
+    munit_assert_int(cpu->PC, ==, 0x03); // Current PC should point to new address
 }
 
 /* 
@@ -335,6 +317,9 @@ MunitResult
     struct cpustate cpu;
 
     init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xC4);
+
+    init_cpu(&cpu);
     cpu.FLAGS.Z = 1;
     assert_call_function_true(&cpu, 0xC4);
 
@@ -346,6 +331,9 @@ MunitResult
     test_cpuprocess_CC(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
+
+    init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xCC);
 
     init_cpu(&cpu);
     assert_call_function_true(&cpu, 0xCC);
@@ -361,6 +349,9 @@ MunitResult
     struct cpustate cpu;
 
     init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xD4);
+
+    init_cpu(&cpu);
     assert_call_function_true(&cpu, 0xD4);
 
     init_cpu(&cpu);
@@ -374,6 +365,9 @@ MunitResult
     struct cpustate cpu;
 
     init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xDC);
+
+    init_cpu(&cpu);
     cpu.FLAGS.C = 1;
     assert_call_function_true(&cpu, 0xDC);
 
@@ -385,6 +379,9 @@ MunitResult
     test_cpuprocess_E4(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
+    
+    init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xE4);
 
     init_cpu(&cpu);
     assert_call_function_true(&cpu, 0xE4);
@@ -400,6 +397,9 @@ MunitResult
     struct cpustate cpu;
 
     init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xEC);
+
+    init_cpu(&cpu);
     cpu.FLAGS.P = 1;
     assert_call_function_true(&cpu, 0xEC);
 
@@ -413,6 +413,9 @@ MunitResult
     struct cpustate cpu;
 
     init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xF4);
+
+    init_cpu(&cpu);
     assert_call_function_true(&cpu, 0xF4);
 
     init_cpu(&cpu);
@@ -424,6 +427,9 @@ MunitResult
     test_cpuprocess_FC(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
+
+    init_cpu(&cpu);
+    test_overflow_word(&cpu, 0xFC);
 
     init_cpu(&cpu);
     cpu.FLAGS.S = 1;
