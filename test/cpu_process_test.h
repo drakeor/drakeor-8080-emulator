@@ -60,4 +60,16 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_C3(const MunitParameter params[], void* fixture);
+
+
+/*
+ * LOAD accumulator 
+ */
+MunitResult
+    test_cpuprocess_7E(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_0A(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_1A(const MunitParameter params[], void* fixture);
+    
 #endif

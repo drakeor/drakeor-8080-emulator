@@ -89,6 +89,16 @@ MunitTest tests[] = {
     {"/cpu_process/FC",test_cpuprocess_FC, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * LOAD to accumulator
+     */
+    {"/cpu_process/7E",test_cpuprocess_7E, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/0A",test_cpuprocess_0A, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/1A",test_cpuprocess_1A, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

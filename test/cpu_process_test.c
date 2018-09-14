@@ -445,3 +445,35 @@ MunitResult
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xFC);
 }
+
+/*
+ * CALL - Load accumulator instructions
+ */
+
+// Load HL to A
+MunitResult
+    test_cpuprocess_7E(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    init_cpu(&cpu);
+    // Ensure we can't load OOB
+    return MUNIT_FAIL;
+}
+
+// Load BC to A
+MunitResult
+    test_cpuprocess_0A(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    init_cpu(&cpu);
+    return MUNIT_FAIL;
+}
+
+// Load DE to A
+MunitResult
+    test_cpuprocess_1A(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    init_cpu(&cpu);
+    return MUNIT_FAIL;
+}
