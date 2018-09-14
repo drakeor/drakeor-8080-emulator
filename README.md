@@ -3,8 +3,12 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/i08x5bxqyr53cyk9?svg=true)](https://ci.appveyor.com/project/drakeor/drakeor-8080-emulator)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a6b0c7e331404e80b7986656ad0395a1)](https://www.codacy.com/app/drakeor.dragon/drakeor-8080-emulator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=drakeor/drakeor-8080-emulator&amp;utm_campaign=Badge_Grade)
 
-Yet another Intel 8080 emulator written in C. 
+Yet another Intel 8080 emulator written in C.
+
+I tried to build it to not segfault or crash if an 8080 program mis-behaves.
+
 It's built to run on one of my micro controllers hence the small footprint.
+
 I built it to run Space Invaders for a project I'm working on.
 
 # Build Instructions

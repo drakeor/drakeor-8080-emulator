@@ -310,7 +310,7 @@ MunitResult
     return MUNIT_OK;
 }
 
-
+// CNZ
 MunitResult
     test_cpuprocess_C4(const MunitParameter params[], void* fixture)
 {
@@ -327,6 +327,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xC4);
 }
 
+// CZ
 MunitResult
     test_cpuprocess_CC(const MunitParameter params[], void* fixture)
 {
@@ -343,6 +344,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xCC);
 }
 
+// CNC
 MunitResult
     test_cpuprocess_D4(const MunitParameter params[], void* fixture)
 {
@@ -359,6 +361,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xD4);
 }
 
+// CC
 MunitResult
     test_cpuprocess_DC(const MunitParameter params[], void* fixture)
 {
@@ -375,6 +378,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xDC);
 }
 
+// CPO
 MunitResult
     test_cpuprocess_E4(const MunitParameter params[], void* fixture)
 {
@@ -391,6 +395,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xE4);
 }
 
+// CPE
 MunitResult
     test_cpuprocess_EC(const MunitParameter params[], void* fixture)
 {
@@ -407,6 +412,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xEC);
 }
 
+// CP
 MunitResult
     test_cpuprocess_F4(const MunitParameter params[], void* fixture)
 {
@@ -423,6 +429,7 @@ MunitResult
     assert_call_function_false(&cpu, 0xF4);
 }
 
+// CM
 MunitResult
     test_cpuprocess_FC(const MunitParameter params[], void* fixture)
 {

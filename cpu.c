@@ -164,6 +164,11 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
          * Calls
          */
         
+        // 0xCD = CALL addr 
+        case 0xCD:
+            return do_call_inst(cpu, 0xCD, memory, memory_size);
+            break;
+
         // 0xC4 = CALL addr if Z is 1
         case 0xC4:
             CHECK_BUFFER(2);
@@ -180,13 +185,53 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC += 3;
             break;
 
-        
-
-        // 0xCD = CALL addr 
-        case 0xCD:
-            return do_call_inst(cpu, 0xCD, memory, memory_size);
+        // 0xD4 = CALL addr if C is 0
+        case 0xD4:
+            CHECK_BUFFER(2);
+            if(!cpu->FLAGS.C)
+                return do_call_inst(cpu, 0xD4, memory, memory_size);
+            cpu->PC += 3;
             break;
-        
+
+        // 0xDC = CALL addr if C is 1
+        case 0xDC:
+            CHECK_BUFFER(2);
+            if(cpu->FLAGS.C)
+                return do_call_inst(cpu, 0xDC, memory, memory_size);
+            cpu->PC += 3;
+            break;
+
+        // 0xE4 = CALL addr if P is 0
+        case 0xE4:
+            CHECK_BUFFER(2);
+            if(!cpu->FLAGS.P)
+                return do_call_inst(cpu, 0xE4, memory, memory_size);
+            cpu->PC += 3;
+            break;
+
+        // 0xEC = CALL addr if P is 1
+        case 0xEC:
+            CHECK_BUFFER(2);
+            if(cpu->FLAGS.P)
+                return do_call_inst(cpu, 0xEC, memory, memory_size);
+            cpu->PC += 3;
+            break;
+
+        // 0xF4 = CALL addr if S is 0
+        case 0xF4:
+            CHECK_BUFFER(2);
+            if(!cpu->FLAGS.S)
+                return do_call_inst(cpu, 0xF4, memory, memory_size);
+            cpu->PC += 3;
+            break;
+
+        // 0xFC = CALL addr if S is 1
+        case 0xFC:
+            CHECK_BUFFER(2);
+            if(cpu->FLAGS.S)
+                return do_call_inst(cpu, 0xFC, memory, memory_size);
+            cpu->PC += 3;
+            break;
 
         // Panic if we don't know the instruction
         default:
