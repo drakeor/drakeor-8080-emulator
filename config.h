@@ -42,6 +42,8 @@
 // or some tests will fail
 #define TEST_MEMORY_OOB_L 0xFF
 #define TEST_MEMORY_OOB_H 0xFF
+#define TEST_MEMORY_OOB_HL ((TEST_MEMORY_OOB_H << 8) | TEST_MEMORY_OOB_L)
+#define TEST_MEMORY_OOB_LH ((TEST_MEMORY_OOB_L << 8) | TEST_MEMORY_OOB_H)
 
 
 /*

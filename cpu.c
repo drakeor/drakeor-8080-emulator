@@ -233,6 +233,15 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC += 3;
             break;
 
+
+        /*
+         * Data Transfer 
+         */
+        /*case 0x1A:
+            cpu->A = memory[cpu->DE]; 
+            cpu->PC += 1;
+            break;*/
+        
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

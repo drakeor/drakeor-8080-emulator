@@ -325,6 +325,8 @@ MunitResult
 
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xC4);
+
+    return MUNIT_OK;
 }
 
 // CZ
@@ -342,6 +344,8 @@ MunitResult
     init_cpu(&cpu);
     cpu.FLAGS.Z = 1;
     assert_call_function_false(&cpu, 0xCC);
+
+    return MUNIT_OK;
 }
 
 // CNC
@@ -359,6 +363,8 @@ MunitResult
     init_cpu(&cpu);
     cpu.FLAGS.C = 1;
     assert_call_function_false(&cpu, 0xD4);
+
+    return MUNIT_OK;
 }
 
 // CC
@@ -376,6 +382,8 @@ MunitResult
 
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xDC);
+
+    return MUNIT_OK;
 }
 
 // CPO
@@ -393,6 +401,8 @@ MunitResult
     init_cpu(&cpu);
     cpu.FLAGS.P = 1;
     assert_call_function_false(&cpu, 0xE4);
+
+    return MUNIT_OK;
 }
 
 // CPE
@@ -410,6 +420,8 @@ MunitResult
 
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xEC);
+
+    return MUNIT_OK;
 }
 
 // CP
@@ -427,6 +439,8 @@ MunitResult
     init_cpu(&cpu);
     cpu.FLAGS.S = 1;
     assert_call_function_false(&cpu, 0xF4);
+
+    return MUNIT_OK;
 }
 
 // CM
@@ -444,20 +458,57 @@ MunitResult
 
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xFC);
+
+    return MUNIT_OK;
 }
 
 /*
  * CALL - Load accumulator instructions
  */
 
+// Helper function for transfer to A functions.
+void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
+{
+    // Ensure we load correctly
+    {
+        init_cpu(cpu);
+        uint8_t test_memory = 0xAB;
+        uint8_t program[MEMORY_SIZE] = { opcode };
+
+        program[TEST_MEMORY_RAM_HL] = test_memory;
+        (*reg) = TEST_MEMORY_RAM_HL;
+
+        int res = process_cpu(cpu, program, MEMORY_SIZE);
+
+        munit_assert_int(res, ==, 0);       // Call should succeed
+        munit_assert_int(cpu->PC, ==, 1);    // Stack pointer should increase by one
+        munit_assert_int(cpu->A, ==, test_memory);    // A should contain the memory loaded
+    }
+
+    // Ensure overflows fail
+    {
+        init_cpu(cpu);
+        uint8_t test_memory = 0xAB;
+        uint8_t program[MEMORY_SIZE] = { opcode };
+
+        program[TEST_MEMORY_RAM_HL] = test_memory;
+        (*reg) = 0xFFFF;
+
+        int res = process_cpu(cpu, program, MEMORY_SIZE);
+        
+        munit_assert_int(res, ==, -1);       // Call should succeed
+        munit_assert_int(cpu->A, !=, test_memory);    // A shouldn't contain the memory loaded
+    }
+}
+
+
 // Load HL to A
 MunitResult
     test_cpuprocess_7E(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    init_cpu(&cpu);
-    // Ensure we can't load OOB
-    return MUNIT_FAIL;
+    assert_transfer_a_frommem(&cpu, 0x7E, &cpu.HL);
+    return MUNIT_OK;
 }
 
 // Load BC to A
@@ -465,8 +516,8 @@ MunitResult
     test_cpuprocess_0A(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    init_cpu(&cpu);
-    return MUNIT_FAIL;
+    assert_transfer_a_frommem(&cpu, 0x0A, &cpu.BC);
+    return MUNIT_OK;
 }
 
 // Load DE to A
@@ -474,6 +525,6 @@ MunitResult
     test_cpuprocess_1A(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    init_cpu(&cpu);
-    return MUNIT_FAIL;
+    assert_transfer_a_frommem(&cpu, 0x1A, &cpu.DE);
+    return MUNIT_OK;
 }
