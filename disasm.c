@@ -3,9 +3,9 @@
 
 #define CHECK_BUFFER(x) { if((*counter)+x >= buffer_size) { printf("\nbuffer overflow\n"); return -2; }};
 
-#define PRINT_WORD(x) { CHECK_BUFFER(2); printf("%s 0x%02X%02X", x, buffer[(*counter)+1], buffer[(*counter)+2]); *counter += 3; };
+#define PRINT_WORD(x) { CHECK_BUFFER(2); printf("%s0x%02X%02X", x, buffer[(*counter)+1], buffer[(*counter)+2]); *counter += 3; };
 
-#define PRINT_BYTE(x) { CHECK_BUFFER(1); printf("%s 0x%02X", x, buffer[(*counter)+1]);  *counter += 2; };
+#define PRINT_BYTE(x) { CHECK_BUFFER(1); printf("%s0x%02X", x, buffer[(*counter)+1]);  *counter += 2; };
 
 #define PRINT_OP(x) { printf("%s", x); *counter += 1; }
 
@@ -34,7 +34,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x31: PRINT_WORD("LX SP,"); break;
 
         // JMP - goto new pc
-        case 0xC3: PRINT_WORD("JMP"); break;
+        case 0xC3: PRINT_WORD("JMP "); break;
 
         // CALL - calls to addresses
         case 0xCD: PRINT_WORD("CALL "); break;
@@ -46,6 +46,11 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xEC: PRINT_WORD("CPE,"); break;
         case 0xF4: PRINT_WORD("CP,"); break;
         case 0xFC: PRINT_WORD("CM,"); break;
+
+        // MOV - Transfer from memory to A
+        case 0x7E: PRINT_OP("MOV A,(HL)"); break;
+        case 0x0A: PRINT_OP("MOV A,(BC)"); break;
+        case 0x1A: PRINT_OP("MOV A,(DE)"); break;
 
         // Unknown
         default:

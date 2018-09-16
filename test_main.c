@@ -90,7 +90,7 @@ MunitTest tests[] = {
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     /*
-     * LOAD to accumulator
+     * MOV from memory to A
      */
     {"/cpu_process/7E",test_cpuprocess_7E, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },

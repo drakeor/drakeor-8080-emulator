@@ -235,13 +235,33 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
 
         /*
-         * Data Transfer 
+         * MOV from memory to A 
          */
-        /*case 0x1A:
+
+        // 0x7E - Load HL to A
+        case 0x7E:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->A = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+
+        // 0x7E - Load BC to A
+        case 0x0A:
+            if(cpu->BC >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->A = memory[cpu->BC]; 
+            cpu->PC += 1;
+            break;
+
+        // 0x7E - Load DE to A
+        case 0x1A:
+            if(cpu->DE >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
             cpu->A = memory[cpu->DE]; 
             cpu->PC += 1;
-            break;*/
-        
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);
