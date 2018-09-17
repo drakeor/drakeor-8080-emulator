@@ -262,6 +262,66 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC += 1;
             break;
 
+        /*
+        * MOV from register to memory
+        */
+
+        // 0x77 - MOV A to memory
+        case 0x77:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->A; 
+            cpu->PC += 1;
+            break;
+
+        // 0x70 - MOV B to memory
+        case 0x70:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->B; 
+            cpu->PC += 1;
+            break;
+
+        // 0x71 - MOV C to memory
+        case 0x71:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->C; 
+            cpu->PC += 1;
+            break;
+
+        // 0x72 - MOV D to memory        
+        case 0x72:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->D; 
+            cpu->PC += 1;
+            break;
+
+        // 0x73 - MOV E to memory                
+        case 0x73:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->E; 
+            cpu->PC += 1;
+            break;
+
+        // 0x74 - MOV H to memory 
+        case 0x74:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->H; 
+            cpu->PC += 1;
+            break;
+
+        // 0x75 - MOV L to memory 
+        case 0x75:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            memory[cpu->HL] =  cpu->L; 
+            cpu->PC += 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

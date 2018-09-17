@@ -542,12 +542,11 @@ MunitResult
  */
 
 // Helper function for transfer to memory from registers
-void assert_mov_reg_to_mem(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
+void assert_mov_reg_to_mem(struct cpustate* cpu, uint8_t opcode, uint8_t* reg, uint8_t test_memory)
 {
     // Ensure we load correctly
     {
         init_cpu(cpu);
-        uint8_t test_memory = 0xAB;
         uint8_t program[MEMORY_SIZE] = { opcode };
 
         (*reg) = test_memory;
@@ -563,7 +562,6 @@ void assert_mov_reg_to_mem(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
     // Ensure overflows fail
     {
         init_cpu(cpu);
-        uint8_t test_memory = 0xAB;
         uint8_t program[MEMORY_SIZE] = { opcode };
 
         (*reg) = test_memory;
@@ -572,7 +570,7 @@ void assert_mov_reg_to_mem(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
         int res = process_cpu(cpu, program, MEMORY_SIZE);
         
         munit_assert_int(res, ==, -1);       // Call shouldn't succeed
-        munit_assert_int((*reg), !=, test_memory);    // The reg shouldn't contain the memory loaded
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], !=, test_memory);    // The reg shouldn't contain the memory loaded
     }
 }
 
@@ -581,7 +579,7 @@ MunitResult
     test_cpuprocess_77(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x77, &cpu.A);
+    assert_mov_reg_to_mem(&cpu, 0x77, &cpu.A, 0xAB);
     return MUNIT_OK;
 }
 
@@ -590,7 +588,7 @@ MunitResult
     test_cpuprocess_70(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x70, &cpu.B);
+    assert_mov_reg_to_mem(&cpu, 0x70, &cpu.B, 0xAB);
     return MUNIT_OK;
 }
 
@@ -599,7 +597,7 @@ MunitResult
     test_cpuprocess_71(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x71, &cpu.C);
+    assert_mov_reg_to_mem(&cpu, 0x71, &cpu.C, 0xAB);
     return MUNIT_OK;
 }
 
@@ -608,7 +606,7 @@ MunitResult
     test_cpuprocess_72(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x72, &cpu.D);
+    assert_mov_reg_to_mem(&cpu, 0x72, &cpu.D, 0xAB);
     return MUNIT_OK;
 }
 
@@ -617,7 +615,7 @@ MunitResult
     test_cpuprocess_73(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x73, &cpu.E);
+    assert_mov_reg_to_mem(&cpu, 0x73, &cpu.E, 0xAB);
     return MUNIT_OK;
 }
 
@@ -626,7 +624,7 @@ MunitResult
     test_cpuprocess_74(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x74, &cpu.H);
+    assert_mov_reg_to_mem(&cpu, 0x74, &cpu.H, TEST_MEMORY_RAM_H);
     return MUNIT_OK;
 }
 
@@ -635,6 +633,6 @@ MunitResult
     test_cpuprocess_75(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_mov_reg_to_mem(&cpu, 0x75, &cpu.L);
+    assert_mov_reg_to_mem(&cpu, 0x75, &cpu.L, TEST_MEMORY_RAM_L);
     return MUNIT_OK;
 }
