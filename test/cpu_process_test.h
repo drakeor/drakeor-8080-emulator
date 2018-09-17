@@ -63,7 +63,7 @@ MunitResult
 
 
 /*
- * LOAD accumulator 
+ * MOV from memory to register
  */
 MunitResult
     test_cpuprocess_7E(const MunitParameter params[], void* fixture);
@@ -71,5 +71,24 @@ MunitResult
     test_cpuprocess_0A(const MunitParameter params[], void* fixture);
 MunitResult
     test_cpuprocess_1A(const MunitParameter params[], void* fixture);
-    
+
+/*
+ * MOV from register to memory
+ */
+MunitResult
+    test_cpuprocess_77(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_70(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_71(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_72(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_73(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_74(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_75(const MunitParameter params[], void* fixture);
+
+
 #endif

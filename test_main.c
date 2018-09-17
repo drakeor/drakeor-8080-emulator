@@ -99,9 +99,28 @@ MunitTest tests[] = {
     {"/cpu_process/1A",test_cpuprocess_1A, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * MOV from register to memory
+     */
+    {"/cpu_process/77",test_cpuprocess_77, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/70",test_cpuprocess_70, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/71",test_cpuprocess_71, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/72",test_cpuprocess_72, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/73",test_cpuprocess_73, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/74",test_cpuprocess_74, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/75",test_cpuprocess_75, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
+
 
 // Test Suite
 static const MunitSuite suite = {

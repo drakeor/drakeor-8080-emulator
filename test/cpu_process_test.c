@@ -4,7 +4,11 @@
 
 
 /*
- *  Test helper helper functions
+ * Test helper macros
+ */
+
+/*
+ *  Test helper functions
  */
 
 // Makes sure failure occurs when it jumps outside memory bounds
@@ -25,36 +29,11 @@ void test_overflow_word(struct cpustate* cpu, uint8_t opcode)
     munit_assert_int(res, ==, -1);
 }
 
-/*
- *  Test helper functions
+
+
+/* 
+ * LD bytes to registers 
  */
-
-// Helper function for LXI words
-void assert_lxi_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
-{
-    uint8_t program_good[3] = { opcode, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H};
-    uint8_t program_bad[1] = { opcode };
-
-    // LXI instruction should set the SP to 0xBBAA
-    // Make sure bytes line up
-    {
-        init_cpu(cpu);
-        int res = process_cpu(cpu, program_good, 3);
-        munit_assert_int(res, ==, 0);
-        munit_assert_int(*reg, ==, TEST_MEMORY_RAM_HL);
-        munit_assert_int((*cpu).PC, ==, 3);
-    }   
-
-    // LXI instruction should fail, will overflow the buffer
-    {
-        init_cpu(cpu);
-        (*reg) = 0; // We're setting it to zero since stack pointer isnt 0 by default
-        int res = process_cpu(cpu, program_bad, 1);
-        munit_assert_int(res, ==, -1);
-        munit_assert_int(*reg, !=, 0xBBAA);
-        munit_assert_int((*cpu).PC, ==, 0);
-    }   
-}
 
 // Helper function for LD bytes
 void assert_ld_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
@@ -77,34 +56,6 @@ void assert_ld_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
         munit_assert_int((*cpu).PC, ==, 0);
     }   
 }
-
-// Helper function for call functions
-// We do not init the CPU in this
-void assert_call_function_true(struct cpustate* cpu, uint8_t opcode)
-{
-    // Call if that flag is true
-    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-    int res = process_cpu(cpu, program, MEMORY_SIZE);
-    munit_assert_int(res, ==, 0);   // Call should succeed
-    munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-    munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-}
-
-// Helper function for call functions
-// We do not init the CPU in this
-void assert_call_function_false(struct cpustate* cpu, uint8_t opcode)
-{
-    // Do not call if that flag is false
-    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-    int res = process_cpu(cpu, program, MEMORY_SIZE);
-    munit_assert_int(res, ==, 0);   // Call should succeed
-    munit_assert_int(cpu->SP, ==, STACK_START); // Stack pointer shouldn't decrease by two
-    munit_assert_int(cpu->PC, ==, 0x03); // Current PC should point to new address
-}
-
-/* 
- * LD bytes to registers 
- */
 
 // Load to register A
 MunitResult
@@ -165,6 +116,33 @@ MunitResult
 /* 
  * LXI - words to registers 
  */
+
+// Helper function for LXI words
+void assert_lxi_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
+{
+    uint8_t program_good[3] = { opcode, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H};
+    uint8_t program_bad[1] = { opcode };
+
+    // LXI instruction should set the SP to 0xBBAA
+    // Make sure bytes line up
+    {
+        init_cpu(cpu);
+        int res = process_cpu(cpu, program_good, 3);
+        munit_assert_int(res, ==, 0);
+        munit_assert_int(*reg, ==, TEST_MEMORY_RAM_HL);
+        munit_assert_int((*cpu).PC, ==, 3);
+    }   
+
+    // LXI instruction should fail, will overflow the buffer
+    {
+        init_cpu(cpu);
+        (*reg) = 0; // We're setting it to zero since stack pointer isnt 0 by default
+        int res = process_cpu(cpu, program_bad, 1);
+        munit_assert_int(res, ==, -1);
+        munit_assert_int(*reg, !=, 0xBBAA);
+        munit_assert_int((*cpu).PC, ==, 0);
+    }   
+}
 
 // Load word  to BC
 MunitResult
@@ -246,6 +224,30 @@ MunitResult
 /*
  * CALL - call function at address
  */
+
+// Helper function for call functions
+// We do not init the CPU in this
+void assert_call_function_true(struct cpustate* cpu, uint8_t opcode)
+{
+    // Call if that flag is true
+    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
+    int res = process_cpu(cpu, program, MEMORY_SIZE);
+    munit_assert_int(res, ==, 0);   // Call should succeed
+    munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
+    munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
+}
+
+// Helper function for call functions
+// We do not init the CPU in this
+void assert_call_function_false(struct cpustate* cpu, uint8_t opcode)
+{
+    // Do not call if that flag is false
+    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
+    int res = process_cpu(cpu, program, MEMORY_SIZE);
+    munit_assert_int(res, ==, 0);   // Call should succeed
+    munit_assert_int(cpu->SP, ==, STACK_START); // Stack pointer shouldn't decrease by two
+    munit_assert_int(cpu->PC, ==, 0x03); // Current PC should point to new address
+}
 
 // Calls a function at an address
 MunitResult
@@ -466,6 +468,12 @@ MunitResult
  * CALL - Load accumulator instructions
  */
 
+
+
+/*
+ * MOV from memory to A functions
+ */
+
 // Helper function for transfer to A functions.
 void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 {
@@ -496,11 +504,10 @@ void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* r
 
         int res = process_cpu(cpu, program, MEMORY_SIZE);
         
-        munit_assert_int(res, ==, -1);       // Call should succeed
+        munit_assert_int(res, ==, -1);       // Call shouldn't succeed
         munit_assert_int(cpu->A, !=, test_memory);    // A shouldn't contain the memory loaded
     }
 }
-
 
 // Load HL to A
 MunitResult
@@ -526,5 +533,108 @@ MunitResult
 {
     struct cpustate cpu;
     assert_transfer_a_frommem(&cpu, 0x1A, &cpu.DE);
+    return MUNIT_OK;
+}
+
+
+/*
+ * MOV from 8-bit register to 16-bit memory
+ */
+
+// Helper function for transfer to memory from registers
+void assert_mov_reg_to_mem(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
+{
+    // Ensure we load correctly
+    {
+        init_cpu(cpu);
+        uint8_t test_memory = 0xAB;
+        uint8_t program[MEMORY_SIZE] = { opcode };
+
+        (*reg) = test_memory;
+        cpu->HL = TEST_MEMORY_RAM_HL;
+
+        int res = process_cpu(cpu, program, MEMORY_SIZE);
+
+        munit_assert_int(res, ==, 0);       // Call should succeed
+        munit_assert_int(cpu->PC, ==, 1);    // Stack pointer should increase by one
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], ==, test_memory);    // Memory should contain what the register had
+    }
+
+    // Ensure overflows fail
+    {
+        init_cpu(cpu);
+        uint8_t test_memory = 0xAB;
+        uint8_t program[MEMORY_SIZE] = { opcode };
+
+        (*reg) = test_memory;
+        cpu->HL = TEST_MEMORY_OOB_HL;
+
+        int res = process_cpu(cpu, program, MEMORY_SIZE);
+        
+        munit_assert_int(res, ==, -1);       // Call shouldn't succeed
+        munit_assert_int((*reg), !=, test_memory);    // The reg shouldn't contain the memory loaded
+    }
+}
+
+// Move A to (HL)
+MunitResult
+    test_cpuprocess_77(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x77, &cpu.A);
+    return MUNIT_OK;
+}
+
+// Move B to (HL)
+MunitResult
+    test_cpuprocess_70(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x70, &cpu.B);
+    return MUNIT_OK;
+}
+
+// Move C to (HL)
+MunitResult
+    test_cpuprocess_71(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x71, &cpu.C);
+    return MUNIT_OK;
+}
+
+// Move D to (HL)
+MunitResult
+    test_cpuprocess_72(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x72, &cpu.D);
+    return MUNIT_OK;
+}
+
+// Move E to (HL)
+MunitResult
+    test_cpuprocess_73(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x73, &cpu.E);
+    return MUNIT_OK;
+}
+
+// Move H to (HL)
+MunitResult
+    test_cpuprocess_74(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x74, &cpu.H);
+    return MUNIT_OK;
+}
+
+// Move L to (HL)
+MunitResult
+    test_cpuprocess_75(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_mov_reg_to_mem(&cpu, 0x75, &cpu.L);
     return MUNIT_OK;
 }

@@ -52,6 +52,16 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x0A: PRINT_OP("MOV A,(BC)"); break;
         case 0x1A: PRINT_OP("MOV A,(DE)"); break;
 
+         // MOV - Transfer register to memory
+        case 0x77: PRINT_OP("MOV (HL),A"); break;
+        case 0x70: PRINT_OP("MOV (HL),B"); break;
+        case 0x71: PRINT_OP("MOV (HL),C"); break;
+        case 0x72: PRINT_OP("MOV (HL),D"); break;
+        case 0x73: PRINT_OP("MOV (HL),E"); break;
+        case 0x74: PRINT_OP("MOV (HL),H"); break;
+        case 0x75: PRINT_OP("MOV (HL),L"); break;
+
+
         // Unknown
         default:
             PRINT_OP("???");
