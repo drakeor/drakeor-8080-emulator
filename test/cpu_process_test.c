@@ -7,28 +7,22 @@
  * Test helper macros
  */
 
-/*
- *  Test helper functions
- */
+#define SETUP_TEST_1(c1) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1};
+#define SETUP_TEST_2(c1, c2) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2};
+#define SETUP_TEST_3(c1, c2, c3) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3};
+#define SETUP_TEST_4(c1, c2, c3, c4) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4};
 
-// Makes sure failure occurs when it jumps outside memory bounds
-void test_overflow_byte(struct cpustate* cpu, uint8_t opcode)
-{
-    init_cpu(cpu);
-    uint8_t program_bad[1] = { opcode };
-    int res = process_cpu(cpu, program_bad, 1);
-    munit_assert_int(res, ==, -1);
-}
+#define TEST_SUCCESS() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, 0); }
+#define TEST_FAIL() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, -1); }
 
-// Makes sure failure occurs when it jumps outside memory bounds
-void test_overflow_word(struct cpustate* cpu, uint8_t opcode)
-{
-    init_cpu(cpu);
-    uint8_t program_bad[2] = { opcode, 0x00 };
-    int res = process_cpu(cpu, program_bad, 2);
-    munit_assert_int(res, ==, -1);
-}
+#define TEST_SUCCESS_OPCODE() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 1); 
+#define TEST_SUCCESS_BYTE() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 2); 
+#define TEST_SUCCESS_WORD() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 3); 
 
+#define TEST_FAIL_GENERIC() TEST_FAIL(); munit_assert_int(cpu->PC, ==, 0); 
+
+#define SETUP_TEST_OVERFLOW_BYTE(x) init_cpu(cpu); uint8_t program[1] = { x }; int res = process_cpu(cpu, program, 1); munit_assert_int(res, ==, -1);
+#define SETUP_TEST_OVERFLOW_WORD(x) init_cpu(cpu); uint8_t program[2] = { x, 0x00 }; int res = process_cpu(cpu, program, 2); munit_assert_int(res, ==, -1);
 
 
 /* 
@@ -38,21 +32,17 @@ void test_overflow_word(struct cpustate* cpu, uint8_t opcode)
 // Helper function for LD bytes
 void assert_ld_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 {
-    uint8_t program_good[2] = { opcode, 0xAA };
     
     // Make sure bytes line up
     {
-        init_cpu(cpu);
-        int res = process_cpu(cpu, program_good, 2);
-        munit_assert_int(res, ==, 0);
-        munit_assert_int(*reg, ==, 0xAA);
-        munit_assert_int((*cpu).PC, ==, 2);
+        SETUP_TEST_2(opcode, TEST_MEMORY_ROM_L);
+        TEST_SUCCESS_BYTE();
+        munit_assert_int(*reg, ==, TEST_MEMORY_ROM_L);
     }   
 
     // Check for buffer overflow
     {
-        test_overflow_byte(cpu, opcode);
-        munit_assert_int(*reg, !=, 0xAA);
+        SETUP_TEST_OVERFLOW_BYTE(opcode);
         munit_assert_int((*cpu).PC, ==, 0);
     }   
 }
@@ -120,27 +110,19 @@ MunitResult
 // Helper function for LXI words
 void assert_lxi_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 {
-    uint8_t program_good[3] = { opcode, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H};
-    uint8_t program_bad[1] = { opcode };
 
     // LXI instruction should set the SP to 0xBBAA
     // Make sure bytes line up
     {
-        init_cpu(cpu);
-        int res = process_cpu(cpu, program_good, 3);
-        munit_assert_int(res, ==, 0);
+        SETUP_TEST_3(opcode, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H);
+        TEST_SUCCESS_WORD();
         munit_assert_int(*reg, ==, TEST_MEMORY_RAM_HL);
-        munit_assert_int((*cpu).PC, ==, 3);
     }   
 
     // LXI instruction should fail, will overflow the buffer
     {
-        init_cpu(cpu);
-        (*reg) = 0; // We're setting it to zero since stack pointer isnt 0 by default
-        int res = process_cpu(cpu, program_bad, 1);
-        munit_assert_int(res, ==, -1);
+        SETUP_TEST_OVERFLOW_WORD(opcode);
         munit_assert_int(*reg, !=, 0xBBAA);
-        munit_assert_int((*cpu).PC, ==, 0);
     }   
 }
 
@@ -180,42 +162,46 @@ MunitResult
     assert_lxi_word(&cpu, 0x31, &(cpu.SP));
 }
 
+/*
+ * JMPS to boundaries
+ */
+
 // JMP to word
+void assert_jump_opcode(struct cpustate* cpu, uint8_t opcode)
+{
+
+    // JMP instruction should set the PC to 0x0002
+    {
+        SETUP_TEST_3(opcode, 0x02, 0x00);
+        TEST_SUCCESS();
+        munit_assert_int(cpu->PC, ==, 0x0002);
+    }
+
+    // JMP instruction should set the PC
+    {
+        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+        TEST_SUCCESS();        
+        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL);
+    }
+
+    {
+        // Ensure there is no overflow
+        SETUP_TEST_OVERFLOW_WORD(opcode);
+    }
+
+    // JMP instruction should fail, jumping to out of bounds
+    {
+        SETUP_TEST_3(opcode, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H);
+        TEST_FAIL_GENERIC();
+    }
+}
+
 MunitResult
     test_cpuprocess_C3(const MunitParameter params[], void* fixture)
 {    
     // Setup CPU
     struct cpustate cpu;
-
-    // JMP instruction should set the PC to 0x0002
-    {
-        init_cpu(&cpu);
-        uint8_t program[3] = { 0xC3, 0x02, 0x00 };
-        int res = process_cpu(&cpu, program, 3);
-        munit_assert_int(res, ==, 0);
-        munit_assert_int(cpu.PC, ==, 0x0002);
-    }
-
-    // JMP instruction should set the PC
-    {
-        init_cpu(&cpu);
-        uint8_t program[MEMORY_SIZE] = { 0xC3, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        int res = process_cpu(&cpu, program, MEMORY_SIZE);
-        munit_assert_int(res, ==, 0);
-        munit_assert_int(cpu.PC, ==, TEST_MEMORY_ROM_HL);
-    }
-
-    // Ensure there is no overflow
-    test_overflow_word(&cpu, 0xC3);
-
-    // JMP instruction should fail, jumping to out of bounds
-    {
-        init_cpu(&cpu);
-        uint8_t program[3] = { 0xC3, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H };
-        int res = process_cpu(&cpu, program, 3);
-        munit_assert_int(res, ==, -1);
-        munit_assert_int(cpu.PC, ==, 0x0000);
-    }
+    assert_jump_opcode(&cpu, 0xC3);
 
     return MUNIT_OK;
 }
