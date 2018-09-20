@@ -738,3 +738,140 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+/*
+ * DEC byte
+ */
+
+// Helper function for increment functions
+void assert_dec_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
+{
+    // Ensure we decrement normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0xFF;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0xFE);    
+    }
+
+    // Ensure increment wraps around
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0xFF); 
+    }
+}
+
+// a
+MunitResult
+    test_cpuprocess_3D(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x3D, &cpu.A);
+    return MUNIT_OK;
+}
+
+// b
+MunitResult
+    test_cpuprocess_05(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x05, &cpu.B);
+    return MUNIT_OK;
+}
+
+// c
+MunitResult
+    test_cpuprocess_0D(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x0D, &cpu.C);
+    return MUNIT_OK;
+}
+
+// d
+MunitResult
+    test_cpuprocess_15(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x15, &cpu.D);
+    return MUNIT_OK;
+}
+
+// e
+MunitResult
+    test_cpuprocess_1D(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x1D, &cpu.E);
+    return MUNIT_OK;
+}
+
+// h
+MunitResult
+    test_cpuprocess_25(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x25, &cpu.H);
+    return MUNIT_OK;
+}
+
+// l
+MunitResult
+    test_cpuprocess_2D(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_byte(&cpu, 0x2D, &cpu.L);
+    return MUNIT_OK;
+}
+
+// (hl)
+MunitResult
+    test_cpuprocess_35(const MunitParameter params[], void* fixture)
+{
+    struct cpustate realcpu;
+    struct cpustate* cpu = &realcpu;
+
+    // Ensure we increment normally
+    {
+        SETUP_TEST_1(0x35);
+
+        cpu->HL = TEST_MEMORY_RAM_HL;
+        program[TEST_MEMORY_RAM_HL] = 0xFF;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], ==, 0xFE);    
+    }
+
+    // Ensure increment wraps around
+    {
+        SETUP_TEST_1(0x35);
+
+        cpu->HL = TEST_MEMORY_RAM_HL;
+        program[TEST_MEMORY_RAM_HL] = 0x00;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], ==, 0xFF); 
+    }
+
+    // Ensure OOB fails
+    {
+        SETUP_TEST_1(0x35);
+        cpu->HL = TEST_MEMORY_OOB_HL;
+        TEST_FAIL_GENERIC();
+    }
+
+    // Ensure no writing happens in ROM
+    {
+        SETUP_TEST_1(0x35);
+        cpu->HL = TEST_MEMORY_ROM_HL;
+        TEST_FAIL_GENERIC();
+    }
+
+    return MUNIT_OK;
+}

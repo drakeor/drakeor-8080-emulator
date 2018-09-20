@@ -110,4 +110,24 @@ MunitResult
 MunitResult
     test_cpuprocess_34(const MunitParameter params[], void* fixture);
 
+/*
+ * DEC byte
+ */
+MunitResult
+    test_cpuprocess_3D(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_05(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_0D(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_15(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_1D(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_25(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_2D(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_35(const MunitParameter params[], void* fixture);
+
 #endif
