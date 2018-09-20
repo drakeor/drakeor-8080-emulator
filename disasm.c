@@ -61,6 +61,15 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x74: PRINT_OP("MOV (HL),H"); break;
         case 0x75: PRINT_OP("MOV (HL),L"); break;
 
+        // INC - Increment register (byte)
+        case 0x3C: PRINT_OP("INC A"); break;
+        case 0x04: PRINT_OP("INC B"); break;
+        case 0x0C: PRINT_OP("INC C"); break;
+        case 0x14: PRINT_OP("INC D"); break;
+        case 0x1C: PRINT_OP("INC E"); break;
+        case 0x24: PRINT_OP("INC H"); break;
+        case 0x2C: PRINT_OP("INC L"); break;
+        case 0x34: PRINT_OP("INC (HL)"); break;
 
         // Unknown
         default:
