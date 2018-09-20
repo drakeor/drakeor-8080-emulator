@@ -875,3 +875,131 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+/*
+ * INC word
+ */
+
+// Helper function for increment functions
+void assert_inc_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
+{
+    // Ensure we increment normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0x20FF;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0x2100);    
+    }
+
+    // Ensure increment wraps around
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0xFFFF;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0x0000); 
+    }
+}
+
+//bc
+MunitResult
+    test_cpuprocess_03(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_inc_word(&cpu, 0x03, &cpu.BC);
+    return MUNIT_OK;
+}
+
+//de
+MunitResult
+    test_cpuprocess_13(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_inc_word(&cpu, 0x13, &cpu.DE);
+    return MUNIT_OK;
+}
+
+// hl
+MunitResult
+    test_cpuprocess_23(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_inc_word(&cpu, 0x23, &cpu.HL);
+    return MUNIT_OK;
+}
+
+// sp
+MunitResult
+    test_cpuprocess_33(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_inc_word(&cpu, 0x33, &cpu.SP);
+    return MUNIT_OK;
+}
+
+/*
+ * DEC word
+ */
+
+// Helper function for decrement functions
+void assert_dec_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
+{
+    // Ensure we decrement normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0x2000;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0x1FFF);    
+    }
+
+    // Ensure decrement wraps around
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0x0000;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0xFFFF); 
+    }
+}
+
+// bc
+MunitResult
+    test_cpuprocess_0B(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_word(&cpu, 0x0B, &cpu.BC);
+    return MUNIT_OK;
+}
+
+// de
+MunitResult
+    test_cpuprocess_1B(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_word(&cpu, 0x1B, &cpu.DE);
+    return MUNIT_OK;
+}
+
+// hl
+MunitResult
+    test_cpuprocess_2B(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_word(&cpu, 0x2B, &cpu.HL);
+    return MUNIT_OK;
+}
+
+// sp
+MunitResult
+    test_cpuprocess_3B(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_dec_word(&cpu, 0x3B, &cpu.SP);
+    return MUNIT_OK;
+}

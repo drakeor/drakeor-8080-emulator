@@ -157,6 +157,30 @@ MunitTest tests[] = {
     {"/cpu_process/35",test_cpuprocess_35, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+    * INC word
+    */
+    {"/cpu_process/03",test_cpuprocess_03, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/13",test_cpuprocess_13, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/23",test_cpuprocess_23, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/33",test_cpuprocess_33, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
+    /*
+    * DEC word
+    */
+    {"/cpu_process/0B",test_cpuprocess_0B, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/1B",test_cpuprocess_1B, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/2B",test_cpuprocess_2B, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/3B",test_cpuprocess_3B, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

@@ -81,6 +81,18 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x2D: PRINT_OP("DEC L"); break;
         case 0x35: PRINT_OP("DEC (HL)"); break;
 
+        // INC - Increment register pair
+        case 0x03: PRINT_OP("INC BC"); break;
+        case 0x13: PRINT_OP("INC DE"); break;
+        case 0x23: PRINT_OP("INC HL"); break;
+        case 0x33: PRINT_OP("INC SP"); break;
+
+        // DEC - Decrement register pair
+        case 0x0B: PRINT_OP("DEC BC"); break;
+        case 0x1B: PRINT_OP("DEC DE"); break;
+        case 0x2B: PRINT_OP("DEC HL"); break;
+        case 0x3B: PRINT_OP("DEC SP"); break;
+
         // Unknown
         default:
             PRINT_OP("???");

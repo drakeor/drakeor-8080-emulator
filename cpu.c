@@ -482,6 +482,86 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC += 1;
             break;
 
+        /*
+        * INC register pair
+        */
+
+       // 0x03 - INC BC
+       case 0x03:
+            if(cpu->BC == 0xFFFF)
+                cpu->BC = 0x0000;
+            else
+                cpu->BC += 1;
+            cpu->PC += 1;
+            break;
+
+       // 0x13 - INC DE        
+        case 0x13:
+            if(cpu->DE == 0xFFFF)
+                cpu->DE = 0x0000;
+            else
+                cpu->DE += 1;
+            cpu->PC += 1;
+            break;
+
+       // 0x23 - INC HL        
+        case 0x23:
+            if(cpu->HL == 0xFFFF)
+                cpu->HL = 0x0000;
+            else
+                cpu->HL += 1;
+            cpu->PC += 1;
+            break;
+
+       // 0x33 - INC SP        
+        case 0x33:
+            if(cpu->SP == 0xFFFF)
+                cpu->SP = 0x0000;
+            else
+                cpu->SP += 1;
+            cpu->PC += 1;
+            break;
+
+        /*
+        * DEC register pair
+        */
+
+       // 0x0B - DEC BC
+       case 0x0B:
+            if(cpu->BC == 0x0000)
+                cpu->BC = 0xFFFF;
+            else
+                cpu->BC -= 1;
+            cpu->PC += 1;
+            break;
+
+       // 0x1B - DEC DE
+       case 0x1B:
+            if(cpu->DE == 0x0000)
+                cpu->DE = 0xFFFF;
+            else
+                cpu->DE -= 1;
+            cpu->PC += 1;
+            break;
+
+       // 0x2B - DEC HL
+       case 0x2B:
+            if(cpu->HL == 0x0000)
+                cpu->HL = 0xFFFF;
+            else
+                cpu->HL -= 1;
+            cpu->PC += 1;
+            break;
+
+       // 0x3B - DEC SP
+       case 0x3B:
+            if(cpu->SP == 0x0000)
+                cpu->SP = 0xFFFF;
+            else
+                cpu->SP -= 1;
+            cpu->PC += 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);
