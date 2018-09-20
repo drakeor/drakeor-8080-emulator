@@ -312,53 +312,54 @@ void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t tru
 
 // 
 // Calls a function at an address
+// This one is more in-depth than the conditional calls.
 MunitResult
     test_cpuprocess_CD(const MunitParameter params[], void* fixture)
 {
-/*
+    struct cpustate realcpu;
+    struct cpustate* cpu = &realcpu;
+
     // Ensure there is no overflow
     {
-        struct cpustate cpu;
-        test_overflow_word(&cpu, 0xCD);
+        SETUP_TEST_OVERFLOW_WORD(0xCD);
     }
 
     // Test functionality of CALL
     {
-        struct cpustate cpu;
-        init_cpu(&cpu);
-        uint8_t program[MEMORY_SIZE] = { 0x00, 0xCD, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        process_cpu(&cpu, program, MEMORY_SIZE); // Process twice to get rid of NOP
-        int res = process_cpu(&cpu, program, MEMORY_SIZE);
-        munit_assert_int(res, ==, 0);   // Call should succeed
-        munit_assert_int(cpu.SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-        munit_assert_int(cpu.PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-        printf("Memory: 0x%02X 0x%02X\n", program[cpu.SP + 1], program[cpu.SP + 2]);
-        munit_assert_int(program[cpu.SP], ==, 0x00); // Stack should hold hi of return address
-        munit_assert_int(program[cpu.SP + 1], ==, 0x01); // Stack + 1 should hold lo of return address
+        SETUP_TEST_4(0x00, 0xCD,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        TEST_SUCCESS(); 
+        TEST_SUCCESS(); // Process twice to get rid of NOP
+
+        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
+        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
+        printf("Memory: 0x%02X 0x%02X\n", program[cpu->SP + 1], program[cpu->SP + 2]);
+        munit_assert_int(program[cpu->SP], ==, 0x00); // Stack should hold hi of return address
+        munit_assert_int(program[cpu->SP + 1], ==, 0x01); // Stack + 1 should hold lo of return address
     }
 
     // Do not allow stack to underflow
     {
-        struct cpustate cpu;
-        init_cpu(&cpu);
-        cpu.SP = 0x00;
-        uint8_t program[MEMORY_SIZE] = { 0x00, 0xCD, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        process_cpu(&cpu, program, MEMORY_SIZE); // Process twice to get rid of NOP
-        int res = process_cpu(&cpu, program, MEMORY_SIZE);
-        munit_assert_int(res, ==, -1);   // Call should fail
-        munit_assert_int(cpu.SP, ==, 0x00); // Stack pointer should stay the same
+        SETUP_TEST_4(0x00, 0xCD,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->SP = 0x00;
+
+        TEST_SUCCESS(); 
+        TEST_FAIL(); // Process twice to get rid of NOP
+
+        munit_assert_int(cpu->SP, ==, 0x00); // Stack pointer should stay the same
     }
 
     // Do not allow stack to write into ROM
     {
-        struct cpustate cpu;
-        init_cpu(&cpu);
-        cpu.SP = TEST_MEMORY_ROM_HL;
-        uint8_t program[MEMORY_SIZE] = { 0x00, 0xCD, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        process_cpu(&cpu, program, MEMORY_SIZE); // Process twice to get rid of NOP
-        int res = process_cpu(&cpu, program, MEMORY_SIZE);
-        munit_assert_int(res, ==, -1);   // Call should fail
-        munit_assert_int(cpu.SP, ==, TEST_MEMORY_ROM_HL); // Stack pointer should stay the same
+        SETUP_TEST_4(0x00, 0xCD,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->SP = TEST_MEMORY_ROM_HL;
+
+        TEST_SUCCESS(); 
+        TEST_FAIL(); // Process twice to get rid of NOP
+
+        munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL); // Stack pointer should stay the same
     }
 
     // Do not jump out of bounds
@@ -372,9 +373,6 @@ MunitResult
     }
 
     return MUNIT_OK;
-    */
-    return MUNIT_SKIP;
-
 }
 
 // CNZ
