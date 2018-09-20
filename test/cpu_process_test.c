@@ -4,7 +4,8 @@
 
 
 /*
- * Test helper macros
+ * Test helper macros.
+ * We use a ton of macros to help trace munit back to the proper line numbers for failed tests.
  */
 
 #define SETUP_TEST_1(c1) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1};
@@ -24,6 +25,48 @@
 #define SETUP_TEST_OVERFLOW_BYTE(x) init_cpu(cpu); uint8_t program[1] = { x }; int res = process_cpu(cpu, program, 1); munit_assert_int(res, ==, -1);
 #define SETUP_TEST_OVERFLOW_WORD(x) init_cpu(cpu); uint8_t program[2] = { x, 0x00 }; int res = process_cpu(cpu, program, 2); munit_assert_int(res, ==, -1);
 
+/*
+ * Test helper functions
+ */ 
+uint8_t get_psw_flag_z() 
+{
+    struct cpustate flaggedcpu;
+    init_cpu(&flaggedcpu);
+    flaggedcpu.FLAGS.Z = 1;
+    return flaggedcpu.PSW;
+}
+
+uint8_t get_psw_flag_ac() 
+{
+    struct cpustate flaggedcpu;
+    init_cpu(&flaggedcpu);
+    flaggedcpu.FLAGS.AC = 1;
+    return flaggedcpu.PSW;
+}
+
+uint8_t get_psw_flag_c() 
+{
+    struct cpustate flaggedcpu;
+    init_cpu(&flaggedcpu);
+    flaggedcpu.FLAGS.C = 1;
+    return flaggedcpu.PSW;
+}
+
+uint8_t get_psw_flag_p() 
+{
+    struct cpustate flaggedcpu;
+    init_cpu(&flaggedcpu);
+    flaggedcpu.FLAGS.P = 1;
+    return flaggedcpu.PSW;
+}
+
+uint8_t get_psw_flag_s() 
+{
+    struct cpustate flaggedcpu;
+    init_cpu(&flaggedcpu);
+    flaggedcpu.FLAGS.S = 1;
+    return flaggedcpu.PSW;
+}
 
 /* 
  * LD bytes to registers 
@@ -196,6 +239,7 @@ void assert_jump_opcode(struct cpustate* cpu, uint8_t opcode)
     }
 }
 
+// Unconditional jump
 MunitResult
     test_cpuprocess_C3(const MunitParameter params[], void* fixture)
 {    
@@ -213,6 +257,7 @@ MunitResult
 
 // Helper function for call functions
 // We do not init the CPU in this
+/*
 void assert_call_function_true(struct cpustate* cpu, uint8_t opcode)
 {
     // Call if that flag is true
@@ -233,8 +278,39 @@ void assert_call_function_false(struct cpustate* cpu, uint8_t opcode)
     munit_assert_int(res, ==, 0);   // Call should succeed
     munit_assert_int(cpu->SP, ==, STACK_START); // Stack pointer shouldn't decrease by two
     munit_assert_int(cpu->PC, ==, 0x03); // Current PC should point to new address
+}*/
+
+void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t true_flags, uint8_t false_flags)
+{
+    // Test overflow
+    {
+        SETUP_TEST_OVERFLOW_WORD(opcode);
+    }
+
+    // True condition
+    {
+        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = true_flags;
+
+        TEST_SUCCESS();
+        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
+        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
+    }
+
+    // False condition
+    {
+        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = false_flags;
+
+        TEST_SUCCESS_WORD();
+        munit_assert_int(cpu->SP, ==, STACK_START); // Stack pointer shouldn't decrease by two
+        munit_assert_int(cpu->PC, !=, TEST_MEMORY_ROM_HL); // Current PC should point to new address
+    }
 }
 
+// 
 // Calls a function at an address
 MunitResult
     test_cpuprocess_CD(const MunitParameter params[], void* fixture)
@@ -305,173 +381,73 @@ MunitResult
 MunitResult
     test_cpuprocess_C4(const MunitParameter params[], void* fixture)
 {
-    /*struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xC4);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.Z = 1;
-    assert_call_function_true(&cpu, 0xC4);
-
-    init_cpu(&cpu);
-    assert_call_function_false(&cpu, 0xC4);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xC4, get_psw_flag_z() , 0x00);
+    return MUNIT_OK;
 }
 
 // CZ
 MunitResult
     test_cpuprocess_CC(const MunitParameter params[], void* fixture)
 {
-   /* struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xCC);
-
-    init_cpu(&cpu);
-    assert_call_function_true(&cpu, 0xCC);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.Z = 1;
-    assert_call_function_false(&cpu, 0xCC);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xCC, 0x00, get_psw_flag_z());
+    return MUNIT_OK;
 }
 
 // CNC
 MunitResult
     test_cpuprocess_D4(const MunitParameter params[], void* fixture)
 {
-   /* struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xD4);
-
-    init_cpu(&cpu);
-    assert_call_function_true(&cpu, 0xD4);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.C = 1;
-    assert_call_function_false(&cpu, 0xD4);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xD4, 0x00, get_psw_flag_c());
+    return MUNIT_OK;
 }
 
 // CC
 MunitResult
     test_cpuprocess_DC(const MunitParameter params[], void* fixture)
 {
-    /*struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xDC);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.C = 1;
-    assert_call_function_true(&cpu, 0xDC);
-
-    init_cpu(&cpu);
-    assert_call_function_false(&cpu, 0xDC);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xDC, get_psw_flag_c(), 0x00);
+    return MUNIT_OK;
 }
 
 // CPO
 MunitResult
     test_cpuprocess_E4(const MunitParameter params[], void* fixture)
 {
-   /* struct cpustate cpu;
-    
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xE4);
-
-    init_cpu(&cpu);
-    assert_call_function_true(&cpu, 0xE4);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.P = 1;
-    assert_call_function_false(&cpu, 0xE4);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xE4, 0x00, get_psw_flag_p());
+    return MUNIT_OK;
 }
 
 // CPE
 MunitResult
     test_cpuprocess_EC(const MunitParameter params[], void* fixture)
 {
-   /* struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xEC);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.P = 1;
-    assert_call_function_true(&cpu, 0xEC);
-
-    init_cpu(&cpu);
-    assert_call_function_false(&cpu, 0xEC);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xEC, get_psw_flag_p(), 0x00);
+    return MUNIT_OK;
 }
 
 // CP
 MunitResult
     test_cpuprocess_F4(const MunitParameter params[], void* fixture)
 {
-    /*struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xF4);
-
-    init_cpu(&cpu);
-    assert_call_function_true(&cpu, 0xF4);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.S = 1;
-    assert_call_function_false(&cpu, 0xF4);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xF4, 0x00, get_psw_flag_s());
+    return MUNIT_OK;
 }
 
 // CM
 MunitResult
     test_cpuprocess_FC(const MunitParameter params[], void* fixture)
 {
-    /*struct cpustate cpu;
-
-    init_cpu(&cpu);
-    test_overflow_word(&cpu, 0xFC);
-
-    init_cpu(&cpu);
-    cpu.FLAGS.S = 1;
-    assert_call_function_true(&cpu, 0xFC);
-
-    init_cpu(&cpu);
-    assert_call_function_false(&cpu, 0xFC);
-
-    return MUNIT_OK;*/
-    return MUNIT_SKIP;
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xFC, get_psw_flag_s(), 0x00);
+    return MUNIT_OK;
 }
-
-/*
- * CALL - Load accumulator instructions
- */
-
 
 
 /*
@@ -484,18 +460,11 @@ void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* r
     // Ensure we load correctly
     {
         SETUP_TEST_1(opcode);
-        //init_cpu(cpu);
-        //uint8_t program[MEMORY_SIZE] = { opcode };
-        //uint8_t test_memory = 0xAB;
 
         program[TEST_MEMORY_RAM_HL] = TEST_MEMORY_BYTE;
         (*reg) = TEST_MEMORY_RAM_HL;
 
         TEST_SUCCESS_OPCODE();
-        //int res = process_cpu(cpu, program, MEMORY_SIZE);
-
-        //munit_assert_int(res, ==, 0);       // Call should succeed
-        //munit_assert_int(cpu->PC, ==, 1);    // Stack pointer should increase by one
         munit_assert_int(cpu->A, ==, TEST_MEMORY_BYTE);    // A should contain the memory loaded
     }
 
@@ -503,17 +472,11 @@ void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* r
     {
         SETUP_TEST_1(opcode);
 
-        //init_cpu(cpu);
-        //uint8_t test_memory = 0xAB;
-        //uint8_t program[MEMORY_SIZE] = { opcode };
-
         program[TEST_MEMORY_RAM_HL] = TEST_MEMORY_BYTE;
         (*reg) = 0xFFFF;
 
         TEST_FAIL_GENERIC();
-       // int res = process_cpu(cpu, program, MEMORY_SIZE);
-        
-       // munit_assert_int(res, ==, -1);       // Call shouldn't succeed
+
         munit_assert_int(cpu->A, !=, TEST_MEMORY_BYTE);    // A shouldn't contain the memory loaded
     }
 }
