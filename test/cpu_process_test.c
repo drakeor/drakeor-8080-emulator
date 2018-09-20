@@ -239,7 +239,7 @@ void assert_call_function_false(struct cpustate* cpu, uint8_t opcode)
 MunitResult
     test_cpuprocess_CD(const MunitParameter params[], void* fixture)
 {
-
+/*
     // Ensure there is no overflow
     {
         struct cpustate cpu;
@@ -296,13 +296,16 @@ MunitResult
     }
 
     return MUNIT_OK;
+    */
+    return MUNIT_SKIP;
+
 }
 
 // CNZ
 MunitResult
     test_cpuprocess_C4(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+    /*struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xC4);
@@ -314,14 +317,16 @@ MunitResult
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xC4);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CZ
 MunitResult
     test_cpuprocess_CC(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+   /* struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xCC);
@@ -333,14 +338,16 @@ MunitResult
     cpu.FLAGS.Z = 1;
     assert_call_function_false(&cpu, 0xCC);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CNC
 MunitResult
     test_cpuprocess_D4(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+   /* struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xD4);
@@ -352,14 +359,16 @@ MunitResult
     cpu.FLAGS.C = 1;
     assert_call_function_false(&cpu, 0xD4);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CC
 MunitResult
     test_cpuprocess_DC(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+    /*struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xDC);
@@ -371,14 +380,16 @@ MunitResult
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xDC);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CPO
 MunitResult
     test_cpuprocess_E4(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+   /* struct cpustate cpu;
     
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xE4);
@@ -390,14 +401,16 @@ MunitResult
     cpu.FLAGS.P = 1;
     assert_call_function_false(&cpu, 0xE4);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CPE
 MunitResult
     test_cpuprocess_EC(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+   /* struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xEC);
@@ -409,14 +422,16 @@ MunitResult
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xEC);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CP
 MunitResult
     test_cpuprocess_F4(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+    /*struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xF4);
@@ -428,14 +443,16 @@ MunitResult
     cpu.FLAGS.S = 1;
     assert_call_function_false(&cpu, 0xF4);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
+
 }
 
 // CM
 MunitResult
     test_cpuprocess_FC(const MunitParameter params[], void* fixture)
 {
-    struct cpustate cpu;
+    /*struct cpustate cpu;
 
     init_cpu(&cpu);
     test_overflow_word(&cpu, 0xFC);
@@ -447,7 +464,8 @@ MunitResult
     init_cpu(&cpu);
     assert_call_function_false(&cpu, 0xFC);
 
-    return MUNIT_OK;
+    return MUNIT_OK;*/
+    return MUNIT_SKIP;
 }
 
 /*
@@ -465,33 +483,38 @@ void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* r
 {
     // Ensure we load correctly
     {
-        init_cpu(cpu);
-        uint8_t test_memory = 0xAB;
-        uint8_t program[MEMORY_SIZE] = { opcode };
+        SETUP_TEST_1(opcode);
+        //init_cpu(cpu);
+        //uint8_t program[MEMORY_SIZE] = { opcode };
+        //uint8_t test_memory = 0xAB;
 
-        program[TEST_MEMORY_RAM_HL] = test_memory;
+        program[TEST_MEMORY_RAM_HL] = TEST_MEMORY_BYTE;
         (*reg) = TEST_MEMORY_RAM_HL;
 
-        int res = process_cpu(cpu, program, MEMORY_SIZE);
+        TEST_SUCCESS_OPCODE();
+        //int res = process_cpu(cpu, program, MEMORY_SIZE);
 
-        munit_assert_int(res, ==, 0);       // Call should succeed
-        munit_assert_int(cpu->PC, ==, 1);    // Stack pointer should increase by one
-        munit_assert_int(cpu->A, ==, test_memory);    // A should contain the memory loaded
+        //munit_assert_int(res, ==, 0);       // Call should succeed
+        //munit_assert_int(cpu->PC, ==, 1);    // Stack pointer should increase by one
+        munit_assert_int(cpu->A, ==, TEST_MEMORY_BYTE);    // A should contain the memory loaded
     }
 
     // Ensure overflows fail
     {
-        init_cpu(cpu);
-        uint8_t test_memory = 0xAB;
-        uint8_t program[MEMORY_SIZE] = { opcode };
+        SETUP_TEST_1(opcode);
 
-        program[TEST_MEMORY_RAM_HL] = test_memory;
+        //init_cpu(cpu);
+        //uint8_t test_memory = 0xAB;
+        //uint8_t program[MEMORY_SIZE] = { opcode };
+
+        program[TEST_MEMORY_RAM_HL] = TEST_MEMORY_BYTE;
         (*reg) = 0xFFFF;
 
-        int res = process_cpu(cpu, program, MEMORY_SIZE);
+        TEST_FAIL_GENERIC();
+       // int res = process_cpu(cpu, program, MEMORY_SIZE);
         
-        munit_assert_int(res, ==, -1);       // Call shouldn't succeed
-        munit_assert_int(cpu->A, !=, test_memory);    // A shouldn't contain the memory loaded
+       // munit_assert_int(res, ==, -1);       // Call shouldn't succeed
+        munit_assert_int(cpu->A, !=, TEST_MEMORY_BYTE);    // A shouldn't contain the memory loaded
     }
 }
 
@@ -621,4 +644,72 @@ MunitResult
     struct cpustate cpu;
     assert_mov_reg_to_mem(&cpu, 0x75, &cpu.L, TEST_MEMORY_RAM_L);
     return MUNIT_OK;
+}
+
+/*
+ * INC byte
+ */
+
+// a
+MunitResult
+    test_cpuprocess_3C(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_OK;
+}
+
+// b
+MunitResult
+    test_cpuprocess_04(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
+}
+
+// c
+MunitResult
+    test_cpuprocess_0C(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
+}
+
+// d
+MunitResult
+    test_cpuprocess_14(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
+}
+
+// e
+MunitResult
+    test_cpuprocess_1C(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
+}
+
+// h
+MunitResult
+    test_cpuprocess_24(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
+}
+
+// l
+MunitResult
+    test_cpuprocess_2C(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
+}
+
+// hl
+MunitResult
+    test_cpuprocess_34(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    return MUNIT_SKIP;
 }

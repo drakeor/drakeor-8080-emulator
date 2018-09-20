@@ -90,5 +90,24 @@ MunitResult
 MunitResult
     test_cpuprocess_75(const MunitParameter params[], void* fixture);
 
+/*
+ * INC byte
+ */
+MunitResult
+    test_cpuprocess_3C(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_04(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_0C(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_14(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_1C(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_24(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_2C(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_34(const MunitParameter params[], void* fixture);
 
 #endif

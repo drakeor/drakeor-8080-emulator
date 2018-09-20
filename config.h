@@ -45,6 +45,9 @@
 #define TEST_MEMORY_OOB_HL ((TEST_MEMORY_OOB_H << 8) | TEST_MEMORY_OOB_L)
 #define TEST_MEMORY_OOB_LH ((TEST_MEMORY_OOB_L << 8) | TEST_MEMORY_OOB_H)
 
+// Test memory to sample for tests
+#define TEST_MEMORY_BYTE 0xAB
+#define TEST_MEMORY_WORD 0xABCD
 
 /*
  * Set to point to the rom here
