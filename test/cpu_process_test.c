@@ -516,31 +516,26 @@ void assert_mov_reg_to_mem(struct cpustate* cpu, uint8_t opcode, uint8_t* reg, u
 {
     // Ensure we load correctly
     {
-        init_cpu(cpu);
-        uint8_t program[MEMORY_SIZE] = { opcode };
+        SETUP_TEST_1(opcode);
 
         (*reg) = test_memory;
         cpu->HL = TEST_MEMORY_RAM_HL;
 
-        int res = process_cpu(cpu, program, MEMORY_SIZE);
+        TEST_SUCCESS_OPCODE();
 
-        munit_assert_int(res, ==, 0);       // Call should succeed
-        munit_assert_int(cpu->PC, ==, 1);    // Stack pointer should increase by one
         munit_assert_int(program[TEST_MEMORY_RAM_HL], ==, test_memory);    // Memory should contain what the register had
     }
 
     // Ensure overflows fail
     {
-        init_cpu(cpu);
-        uint8_t program[MEMORY_SIZE] = { opcode };
+        SETUP_TEST_1(opcode);
 
         (*reg) = test_memory;
         cpu->HL = TEST_MEMORY_OOB_HL;
 
-        int res = process_cpu(cpu, program, MEMORY_SIZE);
-        
-        munit_assert_int(res, ==, -1);       // Call shouldn't succeed
-        munit_assert_int(program[TEST_MEMORY_RAM_HL], !=, test_memory);    // The reg shouldn't contain the memory loaded
+        TEST_FAIL_GENERIC();
+
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], !=, test_memory);  
     }
 }
 
