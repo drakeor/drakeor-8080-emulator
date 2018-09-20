@@ -653,7 +653,7 @@ MunitResult
     test_cpuprocess_0C(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_inc_byte(&cpu, 0x04, &cpu.C);
+    assert_inc_byte(&cpu, 0x0C, &cpu.C);
     return MUNIT_OK;
 }
 
@@ -662,7 +662,7 @@ MunitResult
     test_cpuprocess_14(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_inc_byte(&cpu, 0x04, &cpu.D);
+    assert_inc_byte(&cpu, 0x14, &cpu.D);
     return MUNIT_OK;
 }
 
@@ -671,7 +671,7 @@ MunitResult
     test_cpuprocess_1C(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_inc_byte(&cpu, 0x04, &cpu.E);
+    assert_inc_byte(&cpu, 0x1C, &cpu.E);
     return MUNIT_OK;
 }
 
@@ -680,7 +680,7 @@ MunitResult
     test_cpuprocess_24(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_inc_byte(&cpu, 0x04, &cpu.H);
+    assert_inc_byte(&cpu, 0x24, &cpu.H);
     return MUNIT_OK;
 }
 
@@ -689,7 +689,7 @@ MunitResult
     test_cpuprocess_2C(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
-    assert_inc_byte(&cpu, 0x04, &cpu.L);
+    assert_inc_byte(&cpu, 0x2C, &cpu.L);
     return MUNIT_OK;
 }
 
@@ -736,5 +736,5 @@ MunitResult
         TEST_FAIL_GENERIC();
     }
 
-    return MUNIT_SKIP;
+    return MUNIT_OK;
 }

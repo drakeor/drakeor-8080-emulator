@@ -322,6 +322,86 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC += 1;
             break;
 
+        /*
+        * INC byte
+        */
+
+        // 0x3C - INC A 
+        case 0x3C:
+            if(cpu->A == 0xFF)
+                cpu->A = 0x00;
+            else
+                cpu->A += 1;
+            cpu->PC += 1;
+            break;
+
+        // 0x04 - INC B
+        case 0x04:
+            if(cpu->B == 0xFF)
+                cpu->B = 0x00;
+            else
+                cpu->B += 1;
+            cpu->PC += 1;
+            break;
+
+        // 0x0C - INC C 
+        case 0x0C:
+            if(cpu->C == 0xFF)
+                cpu->C = 0x00;
+            else
+                cpu->C += 1;
+            cpu->PC += 1;
+            break;
+
+        // 0x14 - INC D 
+        case 0x14:
+            if(cpu->D == 0xFF)
+                cpu->D = 0x00;
+            else
+                cpu->D += 1;
+            cpu->PC += 1;
+            break;
+
+        // 0x1C - INC E 
+        case 0x1C:
+           if(cpu->E == 0xFF)
+                cpu->E = 0x00;
+            else
+                cpu->E += 1;
+            cpu->PC += 1;
+            break;
+
+        // 0x24 - INC H
+        case 0x24:
+            if(cpu->H == 0xFF)
+                cpu->H = 0x00;
+            else
+                cpu->H += 1;
+            cpu->PC += 1;
+            break;
+            
+        // 0x2C - INC L
+        case 0x2C:
+            if(cpu->L == 0xFF)
+                cpu->L = 0x00;
+            else
+                cpu->L += 1;
+            cpu->PC += 1;
+            break;
+            
+        // 0x34 - INC (HL)
+        case 0x34:
+            if(cpu->HL >= memory_size)
+                PANIC("attempting to access memory out of bounds");
+            if((cpu->HL - 2) < ROM_SIZE)
+                PANIC("0x34 instruction will write into ROM");
+            if(memory[cpu->HL] == 0xFF)
+                memory[cpu->HL] = 0x00;
+            else
+                memory[cpu->HL] += 1;
+            cpu->PC += 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);
