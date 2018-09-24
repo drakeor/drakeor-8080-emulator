@@ -996,3 +996,83 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+// if z == 0
+MunitResult
+    test_cpuprocess_C2(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xC2, 0x00, get_psw_flag_z());
+
+    return MUNIT_OK;
+}
+
+// if z == 1
+MunitResult
+    test_cpuprocess_CA(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xCA, get_psw_flag_z(), 0x00);
+
+    return MUNIT_OK;
+}
+
+// if c == 0
+MunitResult
+    test_cpuprocess_D2(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xD2, 0x00, get_psw_flag_c());
+
+    return MUNIT_OK;
+}
+
+// if c == 1
+MunitResult
+    test_cpuprocess_DA(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xDA, get_psw_flag_c(), 0x00);
+
+    return MUNIT_OK;
+}
+
+// if p == 0
+MunitResult
+    test_cpuprocess_E2(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xE2, 0x00, get_psw_flag_p());
+
+    return MUNIT_OK;
+}
+
+// if p = 1
+MunitResult
+    test_cpuprocess_EA(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xEA, get_psw_flag_p(), 0x00);
+
+    return MUNIT_OK;
+}
+
+// if s == 0
+MunitResult
+    test_cpuprocess_F2(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xF2, 0x00, get_psw_flag_s());
+
+    return MUNIT_OK;
+}
+
+// if s == 1
+MunitResult
+    test_cpuprocess_FA(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xFA, get_psw_flag_s(), 0x00);
+
+    return MUNIT_OK;
+}

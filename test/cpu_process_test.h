@@ -152,6 +152,21 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_C3(const MunitParameter params[], void* fixture);
-
+MunitResult
+    test_cpuprocess_C2(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_CA(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_D2(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_DA(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_E2(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_EA(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_F2(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_FA(const MunitParameter params[], void* fixture);
 
 #endif

@@ -182,11 +182,26 @@ MunitTest tests[] = {
     */
     {"/cpu_process/C3",test_cpuprocess_C3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/C2",test_cpuprocess_C2, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/CA",test_cpuprocess_CA, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/D2",test_cpuprocess_D2, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/DA",test_cpuprocess_DA, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/E2",test_cpuprocess_E2, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/EA",test_cpuprocess_EA, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/F2",test_cpuprocess_F2, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/FA",test_cpuprocess_FA, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
-
 
 // Test Suite
 static const MunitSuite suite = {
