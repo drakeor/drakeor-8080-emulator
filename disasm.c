@@ -33,9 +33,6 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x21: PRINT_WORD("LX HL,"); break;
         case 0x31: PRINT_WORD("LX SP,"); break;
 
-        // JMP - goto new pc
-        case 0xC3: PRINT_WORD("JMP "); break;
-
         // CALL - calls to addresses
         case 0xCD: PRINT_WORD("CALL "); break;
         case 0xC4: PRINT_WORD("CNZ,"); break;
@@ -92,6 +89,17 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x1B: PRINT_OP("DEC DE"); break;
         case 0x2B: PRINT_OP("DEC HL"); break;
         case 0x3B: PRINT_OP("DEC SP"); break;
+        
+        // JMP - goto new pc
+        case 0xC3: PRINT_WORD("JMP,"); break;
+        case 0xC2: PRINT_WORD("JNZ,"); break;
+        case 0xCA: PRINT_WORD("JZ,"); break;
+        case 0xD2: PRINT_WORD("JNC,"); break;
+        case 0xDA: PRINT_WORD("JC,"); break;
+        case 0xE2: PRINT_WORD("JPO,"); break;
+        case 0xEA: PRINT_WORD("JPE,"); break;
+        case 0xF2: PRINT_WORD("JP,"); break;
+        case 0xFA: PRINT_WORD("JM,"); break;
 
         // Unknown
         default:

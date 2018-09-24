@@ -973,8 +973,7 @@ void assert_jump_opcode(struct cpustate* cpu, uint8_t opcode, uint8_t true_flags
 
         cpu->PSW = false_flags;
 
-        TEST_FAIL_GENERIC();        
-        munit_assert_int(cpu->PC, !=, TEST_MEMORY_ROM_HL);
+        TEST_SUCCESS_WORD();
     }
 
     // JMP instruction should fail, jumping to out of bounds

@@ -562,8 +562,95 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 PANIC("C3 instruction jumped outside memory bounds");
             cpu->PC = tmp;
             break;
-
         
+        // 0xC2 = JNZ 0x0000 
+        case 0xC2:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("C2 instruction jumped outside memory bounds");
+            if(cpu->FLAGS.Z == 0)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xCA = JZ 0x0000 
+        case 0xCA:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("CA instruction jumped outside memory bounds");
+            if(cpu->FLAGS.Z == 1)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xD2 = JNC 0x0000 
+        case 0xD2:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("D2 instruction jumped outside memory bounds");
+            if(cpu->FLAGS.C == 0)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xDA = JC 0x0000 
+        case 0xDA:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("DA instruction jumped outside memory bounds");
+            if(cpu->FLAGS.C == 1)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xE2 = JPO 0x0000 
+        case 0xE2:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("E2 instruction jumped outside memory bounds");
+            if(cpu->FLAGS.P == 0)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xEA = JPE 0x0000 
+        case 0xEA:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("EA instruction jumped outside memory bounds");
+            if(cpu->FLAGS.P == 1)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xF2 = JP 0x0000 
+        case 0xF2:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("F2 instruction jumped outside memory bounds");
+            if(cpu->FLAGS.S == 0)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
+        // 0xFA = JM 0x0000 
+        case 0xFA:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("FA instruction jumped outside memory bounds");
+            if(cpu->FLAGS.S == 1)
+                cpu->PC = tmp;
+            else
+                cpu->PC += 3;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);
