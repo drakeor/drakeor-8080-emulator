@@ -55,13 +55,6 @@ MunitResult
 MunitResult
     test_cpuprocess_FC(const MunitParameter params[], void* fixture);
 
-/* 
- * Jump commands 
- */
-MunitResult
-    test_cpuprocess_C3(const MunitParameter params[], void* fixture);
-
-
 /*
  * MOV from memory to register
  */
@@ -153,5 +146,12 @@ MunitResult
     test_cpuprocess_2B(const MunitParameter params[], void* fixture);
 MunitResult
     test_cpuprocess_3B(const MunitParameter params[], void* fixture);
+
+/* 
+ * JMP commands 
+ */
+MunitResult
+    test_cpuprocess_C3(const MunitParameter params[], void* fixture);
+
 
 #endif

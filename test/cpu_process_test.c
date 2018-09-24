@@ -205,81 +205,12 @@ MunitResult
     assert_lxi_word(&cpu, 0x31, &(cpu.SP));
 }
 
-/*
- * JMPS to boundaries
- */
-
-// JMP to word
-void assert_jump_opcode(struct cpustate* cpu, uint8_t opcode)
-{
-
-    // JMP instruction should set the PC to 0x0002
-    {
-        SETUP_TEST_3(opcode, 0x02, 0x00);
-        TEST_SUCCESS();
-        munit_assert_int(cpu->PC, ==, 0x0002);
-    }
-
-    // JMP instruction should set the PC
-    {
-        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
-        TEST_SUCCESS();        
-        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL);
-    }
-
-    {
-        // Ensure there is no overflow
-        SETUP_TEST_OVERFLOW_WORD(opcode);
-    }
-
-    // JMP instruction should fail, jumping to out of bounds
-    {
-        SETUP_TEST_3(opcode, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H);
-        TEST_FAIL_GENERIC();
-    }
-}
-
-// Unconditional jump
-MunitResult
-    test_cpuprocess_C3(const MunitParameter params[], void* fixture)
-{    
-    // Setup CPU
-    struct cpustate cpu;
-    assert_jump_opcode(&cpu, 0xC3);
-
-    return MUNIT_OK;
-}
-
 
 /*
  * CALL - call function at address
  */
 
 // Helper function for call functions
-// We do not init the CPU in this
-/*
-void assert_call_function_true(struct cpustate* cpu, uint8_t opcode)
-{
-    // Call if that flag is true
-    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-    int res = process_cpu(cpu, program, MEMORY_SIZE);
-    munit_assert_int(res, ==, 0);   // Call should succeed
-    munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-    munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-}
-
-// Helper function for call functions
-// We do not init the CPU in this
-void assert_call_function_false(struct cpustate* cpu, uint8_t opcode)
-{
-    // Do not call if that flag is false
-    uint8_t program[MEMORY_SIZE] = { opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-    int res = process_cpu(cpu, program, MEMORY_SIZE);
-    munit_assert_int(res, ==, 0);   // Call should succeed
-    munit_assert_int(cpu->SP, ==, STACK_START); // Stack pointer shouldn't decrease by two
-    munit_assert_int(cpu->PC, ==, 0x03); // Current PC should point to new address
-}*/
-
 void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t true_flags, uint8_t false_flags)
 {
     // Test overflow
@@ -288,7 +219,7 @@ void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t tru
     }
 
     // True condition
-    {
+    /*{
         SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
 
         cpu->PSW = true_flags;
@@ -296,10 +227,62 @@ void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t tru
         TEST_SUCCESS();
         munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
         munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
+    }*/
+
+    // Test true condition
+    {
+        SETUP_TEST_4(0x00, opcode,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = true_flags;
+
+        TEST_SUCCESS(); 
+        TEST_SUCCESS(); // Process twice to get rid of NOP
+
+        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
+        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
+        printf("Memory: 0x%02X 0x%02X\n", program[cpu->SP + 1], program[cpu->SP + 2]);
+        munit_assert_int(program[cpu->SP], ==, 0x00); // Stack should hold hi of return address
+        munit_assert_int(program[cpu->SP + 1], ==, 0x01); // Stack + 1 should hold lo of return address
     }
 
-    // False condition
+    // Test true condition and make sure stack doesn't underflow
     {
+        SETUP_TEST_4(0x00, opcode,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = true_flags;
+        cpu->SP = 0x00;
+
+        TEST_SUCCESS(); 
+        TEST_FAIL(); // Process twice to get rid of NOP
+
+        munit_assert_int(cpu->SP, ==, 0x00); // Stack pointer should stay the same
+    }
+
+    // Do not allow stack to write into ROM
+    {
+        SETUP_TEST_4(0x00, opcode,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = true_flags;
+        cpu->SP = TEST_MEMORY_ROM_HL;
+
+        TEST_SUCCESS(); 
+        TEST_FAIL(); // Process twice to get rid of NOP
+
+        munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL); // Stack pointer should stay the same
+    }
+
+    // Do not jump out of bounds
+    {
+        init_cpu(cpu);
+        uint8_t program[4] = { 0x00, opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
+        cpu->PSW = true_flags;
+        process_cpu(cpu, program, 4); // Process twice to get rid of NOP
+        int res = process_cpu(cpu, program, 4);
+        munit_assert_int(res, ==, -1);   // Call should fail
+    }
+
+    // False condition (only if false flags are set)
+    if(true_flags != false_flags) {
         SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
 
         cpu->PSW = false_flags;
@@ -316,62 +299,8 @@ void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t tru
 MunitResult
     test_cpuprocess_CD(const MunitParameter params[], void* fixture)
 {
-    struct cpustate realcpu;
-    struct cpustate* cpu = &realcpu;
-
-    // Ensure there is no overflow
-    {
-        SETUP_TEST_OVERFLOW_WORD(0xCD);
-    }
-
-    // Test functionality of CALL
-    {
-        SETUP_TEST_4(0x00, 0xCD,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
-
-        TEST_SUCCESS(); 
-        TEST_SUCCESS(); // Process twice to get rid of NOP
-
-        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-        printf("Memory: 0x%02X 0x%02X\n", program[cpu->SP + 1], program[cpu->SP + 2]);
-        munit_assert_int(program[cpu->SP], ==, 0x00); // Stack should hold hi of return address
-        munit_assert_int(program[cpu->SP + 1], ==, 0x01); // Stack + 1 should hold lo of return address
-    }
-
-    // Do not allow stack to underflow
-    {
-        SETUP_TEST_4(0x00, 0xCD,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
-
-        cpu->SP = 0x00;
-
-        TEST_SUCCESS(); 
-        TEST_FAIL(); // Process twice to get rid of NOP
-
-        munit_assert_int(cpu->SP, ==, 0x00); // Stack pointer should stay the same
-    }
-
-    // Do not allow stack to write into ROM
-    {
-        SETUP_TEST_4(0x00, 0xCD,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
-
-        cpu->SP = TEST_MEMORY_ROM_HL;
-
-        TEST_SUCCESS(); 
-        TEST_FAIL(); // Process twice to get rid of NOP
-
-        munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL); // Stack pointer should stay the same
-    }
-
-    // Do not jump out of bounds
-    {
-        struct cpustate cpu;
-        init_cpu(&cpu);
-        uint8_t program[4] = { 0x00, 0xCD, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H };
-        process_cpu(&cpu, program, 4); // Process twice to get rid of NOP
-        int res = process_cpu(&cpu, program, 4);
-        munit_assert_int(res, ==, -1);   // Call should fail
-    }
-
+    struct cpustate cpu;
+    assert_call_function_cond(&cpu, 0xCD, 0x00, 0x00);
     return MUNIT_OK;
 }
 
@@ -1001,5 +930,69 @@ MunitResult
 {
     struct cpustate cpu;
     assert_dec_word(&cpu, 0x3B, &cpu.SP);
+    return MUNIT_OK;
+}
+
+
+/*
+ * JMPS to boundaries
+ */
+
+// JMP to word
+void assert_jump_opcode(struct cpustate* cpu, uint8_t opcode, uint8_t true_flags, uint8_t false_flags)
+{
+
+    // Ensure there is no overflow
+    {
+        SETUP_TEST_OVERFLOW_WORD(opcode);
+    }
+
+    // JMP instruction should set the PC to 0x0002
+    {
+        SETUP_TEST_3(opcode, 0x02, 0x00);
+        
+        cpu->PSW = true_flags;
+
+        TEST_SUCCESS();
+        munit_assert_int(cpu->PC, ==, 0x0002);
+    }
+
+    // JMP instruction should set the PC
+    {
+        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = true_flags;
+
+        TEST_SUCCESS();        
+        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL);
+    }
+
+    // Only test false if true_flags and false_flags aren't equal.
+    if(true_flags != false_flags) {
+        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+
+        cpu->PSW = false_flags;
+
+        TEST_FAIL_GENERIC();        
+        munit_assert_int(cpu->PC, !=, TEST_MEMORY_ROM_HL);
+    }
+
+    // JMP instruction should fail, jumping to out of bounds
+    {
+        SETUP_TEST_3(opcode, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H);
+        TEST_FAIL_GENERIC();
+    }
+}
+
+// Helper function for call functions
+
+// Unconditional jump
+MunitResult
+    test_cpuprocess_C3(const MunitParameter params[], void* fixture)
+{    
+    // Setup CPU
+    struct cpustate cpu;
+    assert_jump_opcode(&cpu, 0xC3, 0x00, 0x00);
+
     return MUNIT_OK;
 }

@@ -149,18 +149,6 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             break;
 
         /*
-         * Jumps
-         */
-
-        // 0xC3 = JMP 0x0000 
-        case 0xC3:
-            GET_WORD(tmp);
-            if(tmp >= memory_size)
-                PANIC("C3 instruction jumped outside memory bounds");
-            cpu->PC = tmp;
-            break;
-
-        /*
          * Calls
          */
         
@@ -562,6 +550,20 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC += 1;
             break;
 
+        
+        /*
+         * Jumps
+         */
+
+        // 0xC3 = JMP 0x0000 
+        case 0xC3:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                PANIC("C3 instruction jumped outside memory bounds");
+            cpu->PC = tmp;
+            break;
+
+        
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

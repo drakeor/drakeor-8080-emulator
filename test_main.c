@@ -63,10 +63,6 @@ MunitTest tests[] = {
     {"/cpu_process/31",test_cpuprocess_31, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
-    // Jump instruction
-    {"/cpu_process/C3",test_cpuprocess_C3, 
-        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-
     /*
      * CALL to address
      */
@@ -179,6 +175,12 @@ MunitTest tests[] = {
     {"/cpu_process/2B",test_cpuprocess_2B, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu_process/3B",test_cpuprocess_3B, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
+    /*
+    * JMP instruction
+    */
+    {"/cpu_process/C3",test_cpuprocess_C3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     // Required
