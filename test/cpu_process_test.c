@@ -538,16 +538,6 @@ MunitResult
 // Helper function for increment functions
 void assert_inc_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 {
-    // Ensure we increment normally
-    {
-        SETUP_TEST_1(opcode);
-
-        (*reg) = 0;
-
-        TEST_SUCCESS_OPCODE();
-        munit_assert_int((*reg), ==, 1);    
-    }
-
     // Ensure increment wraps around
     {
         SETUP_TEST_1(opcode);
@@ -556,6 +546,22 @@ void assert_inc_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 
         TEST_SUCCESS_OPCODE();
         munit_assert_int((*reg), ==, 0); 
+        munit_assert_int(cpu->FLAGS.C, ==, 1);  
+        munit_assert_int(cpu->FLAGS.Z, ==, 1);  
+
+    }
+
+    // Ensure we increment normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 1);    
+        munit_assert_int(cpu->FLAGS.C, ==, 0);    
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);  
+
     }
 }
 
@@ -675,16 +681,7 @@ MunitResult
 // Helper function for increment functions
 void assert_dec_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 {
-    // Ensure we decrement normally
-    {
-        SETUP_TEST_1(opcode);
-
-        (*reg) = 0xFF;
-
-        TEST_SUCCESS_OPCODE();
-        munit_assert_int((*reg), ==, 0xFE);    
-    }
-
+    
     // Ensure increment wraps around
     {
         SETUP_TEST_1(opcode);
@@ -693,6 +690,21 @@ void assert_dec_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
 
         TEST_SUCCESS_OPCODE();
         munit_assert_int((*reg), ==, 0xFF); 
+        munit_assert_int(cpu->FLAGS.C, ==, 1);  
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);  
+
+    }
+    
+    // Ensure we decrement normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0xFF;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0xFE);    
+        munit_assert_int(cpu->FLAGS.C, ==, 0);  
+        munit_assert_int(cpu->FLAGS.Z, ==, 1);  
     }
 }
 
@@ -812,16 +824,6 @@ MunitResult
 // Helper function for increment functions
 void assert_inc_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 {
-    // Ensure we increment normally
-    {
-        SETUP_TEST_1(opcode);
-
-        (*reg) = 0x20FF;
-
-        TEST_SUCCESS_OPCODE();
-        munit_assert_int((*reg), ==, 0x2100);    
-    }
-
     // Ensure increment wraps around
     {
         SETUP_TEST_1(opcode);
@@ -830,6 +832,22 @@ void assert_inc_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 
         TEST_SUCCESS_OPCODE();
         munit_assert_int((*reg), ==, 0x0000); 
+        munit_assert_int(cpu->FLAGS.C, ==, 1); 
+        munit_assert_int(cpu->FLAGS.Z, ==, 1);  
+        
+    }
+
+    // Ensure we increment normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0x20FF;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0x2100);    
+        munit_assert_int(cpu->FLAGS.C, ==, 0); 
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);  
+
     }
 }
 
@@ -876,16 +894,6 @@ MunitResult
 // Helper function for decrement functions
 void assert_dec_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 {
-    // Ensure we decrement normally
-    {
-        SETUP_TEST_1(opcode);
-
-        (*reg) = 0x2000;
-
-        TEST_SUCCESS_OPCODE();
-        munit_assert_int((*reg), ==, 0x1FFF);    
-    }
-
     // Ensure decrement wraps around
     {
         SETUP_TEST_1(opcode);
@@ -894,6 +902,31 @@ void assert_dec_word(struct cpustate* cpu, uint8_t opcode, uint16_t* reg)
 
         TEST_SUCCESS_OPCODE();
         munit_assert_int((*reg), ==, 0xFFFF); 
+        munit_assert_int(cpu->FLAGS.C, ==, 1); 
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);  
+    }
+    // Ensure we decrement normally
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0x2000;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0x1FFF);  
+        munit_assert_int(cpu->FLAGS.C, ==, 0);   
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);  
+    }
+
+    // Ensure we decrement normally and sets zero byte
+    {
+        SETUP_TEST_1(opcode);
+
+        (*reg) = 0x0001;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int((*reg), ==, 0x0000);  
+        munit_assert_int(cpu->FLAGS.C, ==, 0);   
+        munit_assert_int(cpu->FLAGS.Z, ==, 1);  
     }
 }
 
