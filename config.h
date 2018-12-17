@@ -7,7 +7,7 @@
  */
 
 // Stack pointer start. We're setting it at the end of the memory
-#define STACK_START 0x4000
+#define STACK_START 0x2400
 
 // Memory size, we're going to have 16KB of ram installed.
 // We're going to use 8KB for ROM and 8KB for RAM since this is what Space Invaders uses
