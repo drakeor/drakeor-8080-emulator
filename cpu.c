@@ -316,9 +316,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x3C - INC A 
         case 0x3C:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->A == 0xFF) {
                 cpu->A = 0x00;
 	    	cpu->FLAGS.C = 0x01;
+	        cpu->FLAGS.Z = 0x01;
 	    } else
                 cpu->A += 1;
             cpu->PC += 1;
@@ -326,9 +329,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x04 - INC B
         case 0x04:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->B == 0xFF) {
                 cpu->B = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
     	    } else
                 cpu->B += 1;
             cpu->PC += 1;
@@ -336,9 +342,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x0C - INC C 
         case 0x0C:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->C == 0xFF) {
                 cpu->C = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
 	    } else
                 cpu->C += 1;
             cpu->PC += 1;
@@ -346,9 +355,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x14 - INC D 
         case 0x14:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->D == 0xFF) {
                 cpu->D = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
 	    } else
                 cpu->D += 1;
             cpu->PC += 1;
@@ -356,9 +368,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x1C - INC E 
         case 0x1C:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
            if(cpu->E == 0xFF) {
                 cpu->E = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
 	   } else
                 cpu->E += 1;
             cpu->PC += 1;
@@ -366,9 +381,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x24 - INC H
         case 0x24:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->H == 0xFF) {
                 cpu->H = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
 	    } else
                 cpu->H += 1;
             cpu->PC += 1;
@@ -376,9 +394,12 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             
         // 0x2C - INC L
         case 0x2C:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->L == 0xFF) {
                 cpu->L = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
 	    } else
                 cpu->L += 1;
             cpu->PC += 1;
@@ -386,6 +407,8 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             
         // 0x34 - INC (HL)
         case 0x34:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->HL >= memory_size)
                 PANIC("attempting to access memory out of bounds");
             if((cpu->HL - 2) < ROM_SIZE)
@@ -393,6 +416,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             if(memory[cpu->HL] == 0xFF) {
                 memory[cpu->HL] = 0x00;
 		cpu->FLAGS.C = 0x01;
+		cpu->FLAGS.Z = 0x01;
 	    } else
                 memory[cpu->HL] += 1;
             cpu->PC += 1;
@@ -404,76 +428,114 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
         // 0x3D - DEC A 
         case 0x3D:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->A == 0x00) {
                 cpu->A = 0xFF;
 	    	cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->A -= 1;
+
+	    if(cpu->A == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
         // 0x05 - DEC B
         case 0x05:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->B == 0x00) {
                 cpu->B = 0xFF;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->B -= 1;
+	    if(cpu->B == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
         // 0x0D - DEC C
         case 0x0D:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->C == 0x00) {
                 cpu->C = 0xFF;
 		cpu->FLAGS.C = 0x01;
     	    } else
                 cpu->C -= 1;
+	    if(cpu->C == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
         // 0x15 - DEC D
         case 0x15:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->D == 0x00) {
                 cpu->D = 0xFF;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->D -= 1;
+	    if(cpu->D == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
         // 0x1D - DEC E 
         case 0x1D:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
            if(cpu->E == 0x00) {
                 cpu->E = 0xFF;
 		cpu->FLAGS.C = 0x01;
 	   } else
                 cpu->E -= 1;
+	    if(cpu->E == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
         // 0x25 - DEC H
         case 0x25:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
            if(cpu->H == 0x00) {
                 cpu->H = 0xFF;
 		cpu->FLAGS.C = 0x01;
 	   } else
                 cpu->H -= 1;
+	    if(cpu->H == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
             
         // 0x2D - DEC L
         case 0x2D:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
            if(cpu->L == 0x00) {
                 cpu->L = 0xFF;
 		cpu->FLAGS.C = 0x01;
 	   } else
                 cpu->L -= 1;
+	    if(cpu->L == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
             
         // 0x34 - DEC (HL)
         case 0x35:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->HL >= memory_size)
                 PANIC("attempting to access memory out of bounds");
             if((cpu->HL - 2) < ROM_SIZE)
@@ -483,6 +545,9 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 		cpu->FLAGS.C = 0x01;
 	    } else
                 memory[cpu->HL] -= 1;
+	    if(memory[cpu->HL] == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
@@ -492,42 +557,62 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
        // 0x03 - INC BC
        case 0x03:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->BC == 0xFFFF) {
                 cpu->BC = 0x0000;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->BC += 1;
+	    if(cpu->BC == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
        // 0x13 - INC DE        
         case 0x13:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->DE == 0xFFFF) {
                 cpu->DE = 0x0000;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->DE += 1;
+	    if(cpu->DE == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
        // 0x23 - INC HL        
         case 0x23:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->HL == 0xFFFF) {
                 cpu->HL = 0x0000;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->HL += 1;
+	    if(cpu->HL == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
        // 0x33 - INC SP        
         case 0x33:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->SP == 0xFFFF) {
                 cpu->SP = 0x0000;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->SP += 1;
             cpu->PC += 1;
+	    if(cpu->SP == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             break;
 
         /*
@@ -536,41 +621,61 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
        // 0x0B - DEC BC
        case 0x0B:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->BC == 0x0000) {
                 cpu->BC = 0xFFFF;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->BC -= 1;
+	    if(cpu->BC == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
        // 0x1B - DEC DE
        case 0x1B:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->DE == 0x0000) {
                 cpu->DE = 0xFFFF;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->DE -= 1;
+	    if(cpu->DE == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
        // 0x2B - DEC HL
        case 0x2B:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->HL == 0x0000) {
                 cpu->HL = 0xFFFF;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->HL -= 1;
+	    if(cpu->HL == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 
        // 0x3B - DEC SP
        case 0x3B:
+            cpu->FLAGS.C = 0x00;
+	    cpu->FLAGS.Z = 0x00;
             if(cpu->SP == 0x0000) {
                 cpu->SP = 0xFFFF;
 		cpu->FLAGS.C = 0x01;
 	    } else
                 cpu->SP -= 1;
+	    if(cpu->SP == 0x00) {
+	    	cpu->FLAGS.Z = 0x01;
+	    }
             cpu->PC += 1;
             break;
 

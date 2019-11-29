@@ -699,10 +699,10 @@ void assert_dec_byte(struct cpustate* cpu, uint8_t opcode, uint8_t* reg)
     {
         SETUP_TEST_1(opcode);
 
-        (*reg) = 0xFF;
+        (*reg) = 0x01;
 
         TEST_SUCCESS_OPCODE();
-        munit_assert_int((*reg), ==, 0xFE);    
+        munit_assert_int((*reg), ==, 0x00);    
         munit_assert_int(cpu->FLAGS.C, ==, 0);  
         munit_assert_int(cpu->FLAGS.Z, ==, 1);  
     }
