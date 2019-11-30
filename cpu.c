@@ -779,6 +779,11 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             else
                 cpu->PC += 3;
             break;
+	
+	// 0xC9 = RET
+	case 0xC9:
+	    cpu->PC += 1;
+	    break;
 
         // Panic if we don't know the instruction
         default:

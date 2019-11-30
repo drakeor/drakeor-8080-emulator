@@ -1108,3 +1108,20 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+/*
+ * RET function
+ */
+MunitResult
+    test_cpuprocess_C9(const MunitParameter params[], void* fixture)
+{
+	struct cpustate cpu;
+	// Manually add two things to the stack
+	// CAll RET
+	// Compare PC.lo and PC.hi to what we had on the stack
+	// Increment stack pointer by 2
+	
+	// Fail test
+	// Make sure that it fails if stack will overflow by popping.
+	return MUNIT_OK;
+}

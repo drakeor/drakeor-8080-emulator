@@ -100,6 +100,9 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xEA: PRINT_WORD("JPE,"); break;
         case 0xF2: PRINT_WORD("JP,"); break;
         case 0xFA: PRINT_WORD("JM,"); break;
+	
+	// RET Functions
+	case 0xc9: PRINT_OP("RET"); break;
 
         // Unknown
         default:
