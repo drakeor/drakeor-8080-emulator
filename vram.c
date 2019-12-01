@@ -42,18 +42,18 @@ int vram_to_bmp() {
     f = fopen("vram.bmp","wb");
     fwrite(bmpfileheader,1,14,f);
     fwrite(bmpinfoheader,1,40,f);
-    /*for(int i=0; i<h; i++)
-    {
-        // So remember that 8080 pixels are stored as bits.
-        // Hence the bitwise operations to write to the BMP file
-        fwrite(img+(w*(h-i-1)*3),3,w,f);
-        fwrite(bmppad,1,(4-(w*3)%4)%4,f);
-    }*/
 
+    /* Remember that our vram is stored 1 bit per pixel
+     * Since BMPs are 24bits per pixel, we need to do some conversions before writing.
+     */
     int vram_dim_x_bytes = (VRAM_DIM_X / 8);
     for(int y=0; y < VRAM_DIM_Y; y++) {
         for(int x=0; x < vram_dim_x_bytes; x++) {
+
+            // Grab the first 8 bits of the row
             unsigned char PIXEL = prom[VRAM_START + x + (y * vram_dim_x_bytes)];
+
+            // Loop through each bit and write to the BMP file
             for(int i=0; i<8; i++) {
                 if(((PIXEL << i) & 0x80) == 0x80) {
                     unsigned char pixel[] = { 0xFF, 0xFF, 0xFF };

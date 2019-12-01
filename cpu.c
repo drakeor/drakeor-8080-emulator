@@ -10,7 +10,7 @@
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 // Populates x with the next byte of information
 #define GET_BYTE(x) { CHECK_BUFFER(1); x = memory[cpu->PC+1];  };
-// Populates x with the next word of information with proper memory alignment.
+// Populates x with the next word of information with proper memory alignment. REMEMBER MEMORY ALIGNMENT
 #define GET_WORD(x) { CHECK_BUFFER(2); x = memory[cpu->PC+1] + (memory[cpu->PC+2] << 8);  };
 
 

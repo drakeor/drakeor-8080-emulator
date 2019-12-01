@@ -3,7 +3,8 @@
 
 #define CHECK_BUFFER(x) { if((*counter)+x >= buffer_size) { printf("\nbuffer overflow\n"); return -2; }};
 
-#define PRINT_WORD(x) { CHECK_BUFFER(2); printf("%s0x%02X%02X", x, buffer[(*counter)+1], buffer[(*counter)+2]); *counter += 3; };
+// REMEMBER MEMORY ALIGNMENT!
+#define PRINT_WORD(x) { CHECK_BUFFER(2); printf("%s0x%02X%02X", x, buffer[(*counter)+2], buffer[(*counter)+1]); *counter += 3; };
 
 #define PRINT_BYTE(x) { CHECK_BUFFER(1); printf("%s0x%02X", x, buffer[(*counter)+1]);  *counter += 2; };
 
