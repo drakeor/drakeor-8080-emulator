@@ -9,6 +9,9 @@
 // Include our config file as always
 #include "config.h"
 
-// Generic vram function
+/*
+ * Dumps vram to a bmp file.
+ */
+int vram_to_bmp();
 
 #endif

@@ -17,6 +17,16 @@
 // Point to the start of the program here
 #define PROGRAM_START 0x00
 
+// Pointer to the VRAM start. Starts at the same pointer as the stack pointer.
+// This ASSUMES that VRAM makes up end of stack to end of memory. 
+// Setting it to 0x0000 will make the emulator think all memory is VRAM.
+#define VRAM_START 0x2400
+#define VRAM_DIM_X 224
+#define VRAM_DIM_Y 256
+
+// Whether or not we want to dump the VRAM to a BMP on panic
+#define DUMP_VRAM_ON_PANIC 1
+
 /*
  * Variables for testing
  */

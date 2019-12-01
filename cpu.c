@@ -1,10 +1,11 @@
 #include "cpu.h"
+#include "vram.h"
 
 /*
  * Helper macros
  */
 // Helper macro for panic
-#define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); return -1; }
+#define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); if(DUMP_VRAM_ON_PANIC) { vram_to_bmp(); printf("vram dumped to file."); } return -1; }
 // Helper to check if we have enough program space
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 // Populates x with the next byte of information
@@ -62,7 +63,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
     if(cpu->PC >= memory_size) {
         PANIC("pc counter overflowed");
     }
-    
+
     // Temp 16-bit register
     uint16_t tmp;
     tmp = 0;
@@ -780,10 +781,10 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 cpu->PC += 3;
             break;
 	
-	// 0xC9 = RET
-	case 0xC9:
-	    cpu->PC += 1;
-	    break;
+        // 0xC9 = RET
+        case 0xC9:
+            cpu->PC += 1;
+            break;
 
         // Panic if we don't know the instruction
         default:

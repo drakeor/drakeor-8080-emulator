@@ -32,6 +32,10 @@ MunitTest tests[] = {
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu/dump_registers", test_dump_registers, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu/test_valid_vram", test_valid_vram, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu/test_cleared_vram", test_cleared_vram, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     /* 
     * LD bytes to registers 

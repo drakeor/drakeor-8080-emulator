@@ -90,3 +90,32 @@ MunitResult
 
         return MUNIT_OK;
 }
+
+// Ensure this function works
+MunitResult
+    test_valid_vram(const MunitParameter params[], void* fixture) {
+        // Ensure that our dimensions don't overflow 
+        munit_assert_int((8 * (MEMORY_SIZE - VRAM_START)) < (VRAM_DIM_X * VRAM_DIM_Y), ==, 0);
+
+        // Ensure our X dims are a factor of 8
+        munit_assert_int(VRAM_DIM_X % 8, ==, 0);
+
+        return MUNIT_OK;
+}
+
+// Test to ensure the vram is cleared
+MunitResult
+    test_cleared_vram(const MunitParameter params[], void* fixture) {
+
+        struct cpustate cpu;
+        init_cpu(&cpu);
+
+        int vram_dim_x_bytes = (VRAM_DIM_X / 8);
+        for(int y=0; y < VRAM_DIM_Y; y++) {
+            for(int x=0; x < vram_dim_x_bytes; x++) {
+                unsigned char PIXEL = prom[VRAM_START + x + (y * vram_dim_x_bytes)];
+                munit_assert_int(PIXEL, ==, 0x00);
+            }
+        }
+        return MUNIT_OK;
+}

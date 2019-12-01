@@ -15,5 +15,10 @@ MunitResult
 MunitResult
     test_dump_registers(const MunitParameter params[], void* fixture);
 
+MunitResult
+    test_valid_vram(const MunitParameter params[], void* fixture);
+
+MunitResult
+    test_cleared_vram(const MunitParameter params[], void* fixture);
 
 #endif
