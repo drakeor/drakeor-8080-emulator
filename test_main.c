@@ -197,7 +197,7 @@ MunitTest tests[] = {
 
     /*
     * Since we don't set parity even/odd in our emulator or sign bits, ignore these instructions
-    
+
     {"/cpu_process/E2",test_cpuprocess_E2, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu_process/EA",test_cpuprocess_EA, 
@@ -212,6 +212,12 @@ MunitTest tests[] = {
     * RET instruction
     */
     {"/cpu_process/C9",test_cpuprocess_C9, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
+    /*
+     * LOAD IMMEDIATE instructions
+     */
+    {"/cpu_process/36",test_cpuprocess_36, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     // Required

@@ -2,30 +2,6 @@
 #include "../cpu.h"
 #include "cpu_process_test.h"
 
-
-/*
- * Test helper macros.
- * We use a ton of macros to help trace munit back to the proper line numbers for failed tests.
- */
-
-#define SETUP_TEST_1(c1) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1};
-#define SETUP_TEST_2(c1, c2) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2};
-#define SETUP_TEST_3(c1, c2, c3) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3};
-#define SETUP_TEST_4(c1, c2, c3, c4) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4};
-#define SETUP_TEST_5(c1, c2, c3, c4, c5) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4, c5};
-
-#define TEST_SUCCESS() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, 0); }
-#define TEST_FAIL() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, -1); }
-
-#define TEST_SUCCESS_OPCODE() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 1); 
-#define TEST_SUCCESS_BYTE() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 2); 
-#define TEST_SUCCESS_WORD() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 3); 
-
-#define TEST_FAIL_GENERIC() TEST_FAIL(); munit_assert_int(cpu->PC, ==, 0); 
-
-#define SETUP_TEST_OVERFLOW_BYTE(x) init_cpu(cpu); uint8_t program[1] = { x }; int res = process_cpu(cpu, program, 1); munit_assert_int(res, ==, -1);
-#define SETUP_TEST_OVERFLOW_WORD(x) init_cpu(cpu); uint8_t program[2] = { x, 0x00 }; int res = process_cpu(cpu, program, 2); munit_assert_int(res, ==, -1);
-
 /*
  * Test helper functions
  */ 
@@ -1132,13 +1108,63 @@ void assert_ret_byte(struct cpustate* cpu, uint8_t opcode)
 
 }
 
-
+// Generic return function
 MunitResult
     test_cpuprocess_C9(const MunitParameter params[], void* fixture)
 {
     struct cpustate cpu;
 
     assert_ret_byte(&cpu, 0xC9);
+   
+	return MUNIT_OK;
+}
+
+/*
+ * Helper function for MVI command
+ */
+void assert_mvi_addr_byte(struct cpustate* cpu, uint8_t opcode)
+{
+    // Test true condition and make sure it was loaded to memory
+    {
+        SETUP_TEST_2(opcode,  TEST_MEMORY_BYTE);
+
+        cpu->HL = TEST_MEMORY_RAM_HL;
+
+        TEST_SUCCESS_BYTE(); 
+
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], ==, TEST_MEMORY_BYTE);
+    }
+
+    // Test false condition where we try to load into ROM (not allowed)
+    {
+        SETUP_TEST_2(opcode,  TEST_MEMORY_BYTE);
+
+        cpu->HL = TEST_MEMORY_ROM_HL;
+
+        TEST_FAIL_GENERIC();
+
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], !=, TEST_MEMORY_BYTE);
+    }
+
+    // Test false condition where we try to load out of bounds (not allowed)
+    {
+        SETUP_TEST_2(opcode,  TEST_MEMORY_BYTE);
+
+        cpu->HL = TEST_MEMORY_OOB_HL;
+
+        TEST_FAIL_GENERIC();
+
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], !=, TEST_MEMORY_BYTE);
+    }
+}
+
+// Loads immediate to (HL)
+MunitResult
+    test_cpuprocess_36(const MunitParameter params[], void* fixture)
+{
+    struct cpustate cpu;
+
+    assert_mvi_addr_byte(&cpu, 0x36);
    
 	return MUNIT_OK;
 }

@@ -3,6 +3,31 @@
 
 #include "../cpu.h"
 
+
+/*
+ * Test helper macros.
+ * We use a ton of macros to help trace munit back to the proper line numbers for failed tests.
+ */
+
+#define SETUP_TEST_1(c1) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1};
+#define SETUP_TEST_2(c1, c2) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2};
+#define SETUP_TEST_3(c1, c2, c3) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3};
+#define SETUP_TEST_4(c1, c2, c3, c4) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4};
+#define SETUP_TEST_5(c1, c2, c3, c4, c5) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4, c5};
+
+#define TEST_SUCCESS() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, 0); }
+#define TEST_FAIL() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, -1); }
+
+#define TEST_SUCCESS_OPCODE() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 1); 
+#define TEST_SUCCESS_BYTE() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 2); 
+#define TEST_SUCCESS_WORD() TEST_SUCCESS(); munit_assert_int(cpu->PC, ==, 3); 
+
+#define TEST_FAIL_GENERIC() TEST_FAIL(); munit_assert_int(cpu->PC, ==, 0); 
+
+#define SETUP_TEST_OVERFLOW_BYTE(x) init_cpu(cpu); uint8_t program[1] = { x }; int res = process_cpu(cpu, program, 1); munit_assert_int(res, ==, -1);
+#define SETUP_TEST_OVERFLOW_WORD(x) init_cpu(cpu); uint8_t program[2] = { x, 0x00 }; int res = process_cpu(cpu, program, 2); munit_assert_int(res, ==, -1);
+
+
 /* 
  * LD bytes to registers 
  */
@@ -174,5 +199,11 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_C9(const MunitParameter params[], void* fixture);
+
+/*
+ * MVI command
+ */
+MunitResult
+    test_cpuprocess_36(const MunitParameter params[], void* fixture);
 
 #endif

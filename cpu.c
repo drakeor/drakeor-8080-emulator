@@ -799,6 +799,17 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->SP = cpu->SP + 2;
             break;
 
+        // 0x36 = MVI (HL), BYTE
+        case 0x36:
+            GET_BYTE(tmp);
+            if(cpu->HL >= memory_size)
+                PANIC("attempting to access memory out of bounds");
+            if((cpu->HL - 2) < ROM_SIZE)
+                PANIC("0x36 instruction will write into ROM");
+            memory[cpu->HL] = tmp;
+            cpu->PC = cpu->PC + 2;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

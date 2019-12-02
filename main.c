@@ -32,7 +32,7 @@ int main()
     dump_registers(&cpu);
     if(DUMP_VRAM_ON_PANIC) { 
         vram_to_bmp(); 
-        printf("vram dumped to file."); 
+        printf("vram dumped to file.\n"); 
     }
 
     return 0;
