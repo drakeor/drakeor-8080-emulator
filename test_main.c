@@ -226,6 +226,12 @@ MunitTest tests[] = {
     {"/cpu_process/mov_reg_to_reg",test_cpuprocess_mov_reg_to_reg, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * CPI instructions
+     */
+    {"/cpu_process/FE",test_cpuprocess_FE, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

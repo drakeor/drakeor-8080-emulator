@@ -212,4 +212,10 @@ MunitResult
 MunitResult
     test_cpuprocess_mov_reg_to_reg(const MunitParameter params[], void* fixture);
 
+/*
+ * CPI command
+ */
+MunitResult
+    test_cpuprocess_FE(const MunitParameter params[], void* fixture);
+    
 #endif

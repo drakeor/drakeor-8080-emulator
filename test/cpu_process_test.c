@@ -1174,7 +1174,7 @@ MunitResult
 MunitResult
     test_cpuprocess_mov_reg_to_reg(const MunitParameter params[], void* fixture)
 {
-    
+    // Doing this allows our macros to work
     struct cpustate r_cpu;
     struct cpustate* cpu = &r_cpu;
 
@@ -1189,6 +1189,8 @@ MunitResult
         NULL,
         &(r_cpu.A),      
     };
+
+    // Register names
     char *reg_naming[8] = {
         "B",
         "C",
@@ -1226,4 +1228,43 @@ MunitResult
        }
    }
 	return MUNIT_OK;
+}
+
+// CPI tests
+MunitResult
+    test_cpuprocess_FE(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // 74 - 64 = 10 (No carry / No zero)
+    {
+        SETUP_TEST_2(0xFE, 0x40);
+        cpu->A = 0x4A;
+        TEST_SUCCESS_BYTE();
+
+        munit_assert_int(cpu->FLAGS.C, ==, 0);
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);
+    }
+
+    // 64 - 64 = 0 (No carry / Zero)
+    {
+        SETUP_TEST_2(0xFE, 0x40);
+        cpu->A = 0x40;
+        TEST_SUCCESS_BYTE();
+
+        munit_assert_int(cpu->FLAGS.C, ==, 0);
+        munit_assert_int(cpu->FLAGS.Z, ==, 1);
+    }
+
+    // 64 - 74 = -10 (Carry / No zero)
+    {
+        SETUP_TEST_2(0xFE, 0x4A);
+        cpu->A = 0x40;
+        TEST_SUCCESS_BYTE();
+
+        munit_assert_int(cpu->FLAGS.C, ==, 1);
+        munit_assert_int(cpu->FLAGS.Z, ==, 0);
+    }
 }

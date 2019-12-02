@@ -172,6 +172,9 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x7d: PRINT_OP("MOV A,L"); break;
         case 0x7f: PRINT_OP("MOV A,A"); break;
 
+        // CPI
+        case 0xFE: PRINT_BYTE("CPI,"); break;
+        
         // Unknown
         default:
             PRINT_OP("???");

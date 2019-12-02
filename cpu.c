@@ -71,6 +71,10 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
     uint16_t tmp;
     tmp = 0;
 
+    // Temp 8-bit register
+    uint8_t tmp8;
+    tmp8 = 0;
+
     // Reg mapping
     char *reg_mapping[8] = {
         &(cpu->B),
@@ -893,6 +897,15 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             dst_byte = 0b00000111 & (memory[cpu->PC] >> 3);
             (*reg_mapping[dst_byte]) = (*reg_mapping[src_byte]);
             cpu->PC = cpu->PC + 1;
+            break;
+
+        // CPI instructions
+        case 0xFE:
+            GET_BYTE(tmp8);
+            int16_t res = cpu->A - tmp8;
+            cpu->FLAGS.C = (res >> 8) & 0x1;
+            cpu->FLAGS.Z = (res == 0x0);
+            cpu->PC = cpu->PC + 2;
             break;
 
         // Panic if we don't know the instruction
