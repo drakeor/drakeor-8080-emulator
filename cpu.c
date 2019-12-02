@@ -31,6 +31,8 @@ int do_call_inst(struct cpustate* cpu, uint8_t opcode, uint8_t* memory, uint16_t
         PANIC("%02X instruction will underflow stack pointer", opcode);
     if((cpu->SP - 2) < ROM_SIZE)
         PANIC("%02X instruction will write into ROM", opcode);
+
+    // We need to store the next instruction after CALL to prevent RET from invoking an infinite loop
     memory[cpu->SP - 1] = (0xFF & cpu->PC);
     memory[cpu->SP - 2] = cpu->PC >> 8;
     cpu->SP -= 2;
@@ -783,7 +785,13 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 	
         // 0xC9 = RET
         case 0xC9:
-            cpu->PC += 1;
+            // Prevent stack underflow
+            if(cpu->SP > STACK_START-2)
+                PANIC("C9 instruction will underflow stack");
+            
+            // Pop address off stack in correct memory order. 
+            cpu->PC = memory[cpu->SP + 1] | (memory[cpu->SP] << 8);
+            cpu->SP = cpu->SP + 2;
             break;
 
         // Panic if we don't know the instruction

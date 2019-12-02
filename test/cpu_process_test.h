@@ -169,4 +169,10 @@ MunitResult
 MunitResult
     test_cpuprocess_FA(const MunitParameter params[], void* fixture);
 
+/*
+ * RET command
+ */
+MunitResult
+    test_cpuprocess_C9(const MunitParameter params[], void* fixture);
+
 #endif

@@ -203,6 +203,12 @@ MunitTest tests[] = {
     {"/cpu_process/FA",test_cpuprocess_FA, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+    * RET instruction
+    */
+    {"/cpu_process/C9",test_cpuprocess_C9, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

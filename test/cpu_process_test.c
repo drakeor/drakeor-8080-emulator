@@ -1109,19 +1109,46 @@ MunitResult
     return MUNIT_OK;
 }
 
+
 /*
- * RET function
+ * Helper function for RET function
  */
+void assert_ret_byte(struct cpustate* cpu, uint8_t opcode)
+{
+     // First test, make sure it's working correctly by manually adding data to the stack and testing it
+    {
+        SETUP_TEST_1(0xC9);
+
+        cpu->SP = cpu->SP - 2;
+        program[cpu->SP] = TEST_MEMORY_RAM_L;
+        program[cpu->SP+1] = TEST_MEMORY_RAM_H;
+
+        TEST_SUCCESS();
+
+        munit_assert_int(cpu->SP, ==, STACK_START);  
+        munit_assert_int(cpu->PC, ==, TEST_MEMORY_RAM_LH);  
+
+    }
+
+    // Second test, make sure we don't underflow and nothing is changed if it fails
+    {
+        SETUP_TEST_1(0xC9);
+
+        TEST_FAIL();
+
+        munit_assert_int(cpu->SP, ==, STACK_START);  
+        munit_assert_int(cpu->PC, ==, 0x00);  
+    }
+
+}
+
+
 MunitResult
     test_cpuprocess_C9(const MunitParameter params[], void* fixture)
 {
-	struct cpustate cpu;
-	// Manually add two things to the stack
-	// CAll RET
-	// Compare PC.lo and PC.hi to what we had on the stack
-	// Increment stack pointer by 2
-	
-	// Fail test
-	// Make sure that it fails if stack will overflow by popping.
+    struct cpustate cpu;
+
+    assert_ret_byte(&cpu, 0xC9);
+   
 	return MUNIT_OK;
 }

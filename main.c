@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "config.h"
+#include "vram.h"
 #include "cpu.h"
 #include "disasm.h"
 
@@ -15,6 +16,7 @@ int main()
     printf("Starting..\n");
 
     unsigned int instruction_count = 1;
+    unsigned int max_instruction_count = 0xFFFFFFFF;
 
     // Main program loop
     do {
@@ -24,7 +26,14 @@ int main()
         op_to_text(prom, MEMORY_SIZE, &tPC);
         ++instruction_count;
 
-    } while(!process_cpu(&cpu, prom, MEMORY_SIZE));
+    } while(!process_cpu(&cpu, prom, MEMORY_SIZE) && instruction_count < max_instruction_count);
+
+    // Dump final state of the CPU and VRAM
+    dump_registers(&cpu);
+    if(DUMP_VRAM_ON_PANIC) { 
+        vram_to_bmp(); 
+        printf("vram dumped to file."); 
+    }
 
     return 0;
 }
