@@ -740,6 +740,8 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 cpu->PC += 3;
             break;
 
+/*
+ * Since we don't set parity even/odd in our emulator or sign bits, ignore these instructions
         // 0xE2 = JPO 0x0000 
         case 0xE2:
             GET_WORD(tmp);
@@ -773,6 +775,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 cpu->PC += 3;
             break;
 
+
         // 0xFA = JM 0x0000 
         case 0xFA:
             GET_WORD(tmp);
@@ -783,7 +786,8 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             else
                 cpu->PC += 3;
             break;
-	
+*/
+
         // 0xC9 = RET
         case 0xC9:
             // Prevent stack underflow
