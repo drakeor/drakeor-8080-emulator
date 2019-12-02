@@ -71,6 +71,22 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
     uint16_t tmp;
     tmp = 0;
 
+    // Reg mapping
+    char *reg_mapping[8] = {
+        &(cpu->B),
+        &(cpu->C),
+        &(cpu->D),
+        &(cpu->E),
+        &(cpu->H),
+        &(cpu->L),
+        NULL,
+        &(cpu->A),      
+    };
+
+    // Temp 8-bit data
+    uint8_t src_byte = 0b00000111 & memory[cpu->PC];
+    uint8_t dst_byte = 0b00000111 & (memory[cpu->PC] >> 3);
+
     switch(memory[cpu->PC]) {
         
         // 0x00 = NOP
@@ -808,6 +824,75 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 PANIC("0x36 instruction will write into ROM");
             memory[cpu->HL] = tmp;
             cpu->PC = cpu->PC + 2;
+            break;
+
+        // MOV register to register instructions
+        // MOV B, <REG> Instructions
+        case 0x40: 
+        case 0x41: 
+        case 0x42: 
+        case 0x43: 
+        case 0x44: 
+        case 0x45: 
+        case 0x47: 
+
+        // MOV C, <REG> Instructions
+        case 0x48: 
+        case 0x49: 
+        case 0x4a: 
+        case 0x4b: 
+        case 0x4c: 
+        case 0x4d: 
+        case 0x4f: 
+
+        // MOV D, <REG> Instructions
+        case 0x50: 
+        case 0x51: 
+        case 0x52: 
+        case 0x53: 
+        case 0x54: 
+        case 0x55: 
+        case 0x57: 
+
+        // MOV E, <REG> Instructions
+        case 0x58: 
+        case 0x59: 
+        case 0x5a: 
+        case 0x5b: 
+        case 0x5c: 
+        case 0x5d: 
+        case 0x5f: 
+
+        // MOV H, <REG> Instructions
+        case 0x60: 
+        case 0x61: 
+        case 0x62: 
+        case 0x63: 
+        case 0x64: 
+        case 0x65: 
+        case 0x67: 
+
+        // MOV L, <REG> Instructions
+        case 0x68: 
+        case 0x69: 
+        case 0x6a: 
+        case 0x6b: 
+        case 0x6c: 
+        case 0x6d: 
+        case 0x6f: 
+
+        // MOV A, <REG> Instructions
+        case 0x78: 
+        case 0x79: 
+        case 0x7a: 
+        case 0x7b: 
+        case 0x7c: 
+        case 0x7d: 
+        case 0x7f: 
+            src_byte = 0b00000111 & memory[cpu->PC];
+            dst_byte = 0b00000111 & (memory[cpu->PC] >> 3);
+            (*reg_mapping[dst_byte]) = (*reg_mapping[src_byte]);
+            cpu->PC = cpu->PC + 1;
             break;
 
         // Panic if we don't know the instruction

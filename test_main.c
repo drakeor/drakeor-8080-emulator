@@ -220,6 +220,12 @@ MunitTest tests[] = {
     {"/cpu_process/36",test_cpuprocess_36, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * MOV instructions
+     */
+    {"/cpu_process/mov_reg_to_reg",test_cpuprocess_mov_reg_to_reg, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

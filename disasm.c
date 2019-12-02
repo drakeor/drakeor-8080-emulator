@@ -108,7 +108,70 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
 
         // MVI Functions
         case 0x36: PRINT_BYTE("MVI (HL),"); break;
-        
+
+        // MOV B, <REG> Instructions
+        case 0x40: PRINT_OP("MOV B,B"); break;
+        case 0x41: PRINT_OP("MOV B,C"); break;
+        case 0x42: PRINT_OP("MOV B,D"); break;
+        case 0x43: PRINT_OP("MOV B,E"); break;
+        case 0x44: PRINT_OP("MOV B,H"); break;
+        case 0x45: PRINT_OP("MOV B,L"); break;
+        case 0x47: PRINT_OP("MOV B,A"); break;
+
+        // MOV C, <REG> Instructions
+        case 0x48: PRINT_OP("MOV C,B"); break;
+        case 0x49: PRINT_OP("MOV C,C"); break;
+        case 0x4a: PRINT_OP("MOV C,D"); break;
+        case 0x4b: PRINT_OP("MOV C,E"); break;
+        case 0x4c: PRINT_OP("MOV C,H"); break;
+        case 0x4d: PRINT_OP("MOV C,L"); break;
+        case 0x4f: PRINT_OP("MOV C,A"); break;
+
+        // MOV D, <REG> Instructions
+        case 0x50: PRINT_OP("MOV D,B"); break;
+        case 0x51: PRINT_OP("MOV D,C"); break;
+        case 0x52: PRINT_OP("MOV D,D"); break;
+        case 0x53: PRINT_OP("MOV D,E"); break;
+        case 0x54: PRINT_OP("MOV D,H"); break;
+        case 0x55: PRINT_OP("MOV D,L"); break;
+        case 0x57: PRINT_OP("MOV D,A"); break;
+
+        // MOV E, <REG> Instructions
+        case 0x58: PRINT_OP("MOV E,B"); break;
+        case 0x59: PRINT_OP("MOV E,C"); break;
+        case 0x5a: PRINT_OP("MOV E,D"); break;
+        case 0x5b: PRINT_OP("MOV E,E"); break;
+        case 0x5c: PRINT_OP("MOV E,H"); break;
+        case 0x5d: PRINT_OP("MOV E,L"); break;
+        case 0x5f: PRINT_OP("MOV E,A"); break;
+
+        // MOV H, <REG> Instructions
+        case 0x60: PRINT_OP("MOV H,B"); break;
+        case 0x61: PRINT_OP("MOV H,C"); break;
+        case 0x62: PRINT_OP("MOV H,D"); break;
+        case 0x63: PRINT_OP("MOV H,E"); break;
+        case 0x64: PRINT_OP("MOV H,H"); break;
+        case 0x65: PRINT_OP("MOV H,L"); break;
+        case 0x67: PRINT_OP("MOV H,A"); break;
+
+        // MOV L, <REG> Instructions
+        case 0x68: PRINT_OP("MOV L,B"); break;
+        case 0x69: PRINT_OP("MOV L,C"); break;
+        case 0x6a: PRINT_OP("MOV L,D"); break;
+        case 0x6b: PRINT_OP("MOV L,E"); break;
+        case 0x6c: PRINT_OP("MOV L,H"); break;
+        case 0x6d: PRINT_OP("MOV L,L"); break;
+        case 0x6f: PRINT_OP("MOV L,A"); break;
+
+        // MOV A, <REG> Instructions
+        case 0x78: PRINT_OP("MOV A,B"); break;
+        case 0x79: PRINT_OP("MOV A,C"); break;
+        case 0x7a: PRINT_OP("MOV A,D"); break;
+        case 0x7b: PRINT_OP("MOV A,E"); break;
+        case 0x7c: PRINT_OP("MOV A,H"); break;
+        case 0x7d: PRINT_OP("MOV A,L"); break;
+        case 0x7f: PRINT_OP("MOV A,A"); break;
+
         // Unknown
         default:
             PRINT_OP("???");

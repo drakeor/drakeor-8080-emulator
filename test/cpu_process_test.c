@@ -1168,3 +1168,62 @@ MunitResult
    
 	return MUNIT_OK;
 }
+
+
+// Mov register to register tests
+MunitResult
+    test_cpuprocess_mov_reg_to_reg(const MunitParameter params[], void* fixture)
+{
+    
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // Helper array to map bits to registers
+    char *reg_mapping[8] = {
+        &(r_cpu.B),
+        &(r_cpu.C),
+        &(r_cpu.D),
+        &(r_cpu.E),
+        &(r_cpu.H),
+        &(r_cpu.L),
+        NULL,
+        &(r_cpu.A),      
+    };
+    char *reg_naming[8] = {
+        "B",
+        "C",
+        "D",
+        "E",
+        "H",
+        "L",
+        "Invalid",
+        "A"
+    };
+
+   // Run through each possible combination of register moves
+   uint8_t dst = 0;
+   uint8_t src = 0;
+   for(dst = 0; dst < 8; dst++) {
+       for(src = 0; src < 8; src++) {
+           
+            // Ignore the memory moves. These are covered in other tests already
+            if(dst != 6 && src != 6) {
+
+                // Build the opcode
+                uint8_t src_byte = 0b00000111 & src;
+                uint8_t dst_byte = 0b00111000 & (dst << 3);
+                uint8_t opcode = 0b01000000 | dst_byte | src_byte;
+
+                // Clear out registers and set the src one in question
+                SETUP_TEST_1(opcode);
+                (*reg_mapping[src]) = 0x1;
+
+                // Run opcode and make sure the source matches the destination opcode
+                printf("Testing opcode %02X (MOV %s from %s)\n", opcode, reg_naming[dst], reg_naming[src]);
+                TEST_SUCCESS_OPCODE();
+                munit_assert_int((*reg_mapping[src]), ==, (*reg_mapping[dst]));
+            }
+       }
+   }
+	return MUNIT_OK;
+}

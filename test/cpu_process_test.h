@@ -206,4 +206,10 @@ MunitResult
 MunitResult
     test_cpuprocess_36(const MunitParameter params[], void* fixture);
 
+/*
+ * MOV register to register commands
+ */
+MunitResult
+    test_cpuprocess_mov_reg_to_reg(const MunitParameter params[], void* fixture);
+
 #endif
