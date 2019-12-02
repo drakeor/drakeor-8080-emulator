@@ -908,6 +908,26 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 2;
             break;
 
+        // PUSH D
+        case 0xD5:
+            if(cpu->SP < ROM_SIZE + 2)
+                PANIC("0xD5 instruction will write into ROM");
+            memory[cpu->SP - 2] = cpu->E;
+            memory[cpu->SP - 1] = cpu->D;
+            cpu->SP = cpu->SP - 2;
+            cpu->PC = cpu->PC + 1;
+            break;
+        
+        // PUSH H
+        case 0xE5:
+            if(cpu->SP < ROM_SIZE + 2)
+                PANIC("0xE5 instruction will write into ROM");
+            memory[cpu->SP - 2] = cpu->L;
+            memory[cpu->SP - 1] = cpu->H;
+            cpu->SP = cpu->SP - 2;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

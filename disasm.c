@@ -174,7 +174,11 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
 
         // CPI
         case 0xFE: PRINT_BYTE("CPI,"); break;
-        
+
+        // PUSH D
+        case 0xD5: PRINT_OP("PUSH D"); break;
+        case 0xE5: PRINT_OP("PUSH E"); break;
+
         // Unknown
         default:
             PRINT_OP("???");
