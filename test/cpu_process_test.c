@@ -12,6 +12,7 @@
 #define SETUP_TEST_2(c1, c2) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2};
 #define SETUP_TEST_3(c1, c2, c3) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3};
 #define SETUP_TEST_4(c1, c2, c3, c4) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4};
+#define SETUP_TEST_5(c1, c2, c3, c4, c5) init_cpu(cpu); uint8_t program[MEMORY_SIZE] = {c1, c2, c3, c4, c5};
 
 #define TEST_SUCCESS() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, 0); }
 #define TEST_FAIL() { int res = process_cpu(cpu, program, MEMORY_SIZE); munit_assert_int(res, ==, -1); }
@@ -218,20 +219,9 @@ void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t tru
         SETUP_TEST_OVERFLOW_WORD(opcode);
     }
 
-    // True condition
-    /*{
-        SETUP_TEST_3(opcode, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
-
-        cpu->PSW = true_flags;
-
-        TEST_SUCCESS();
-        munit_assert_int(cpu->SP, ==, STACK_START - 2); // Stack pointer should decrease by two
-        munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
-    }*/
-
     // Test true condition
     {
-        SETUP_TEST_4(0x00, opcode,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+        SETUP_TEST_5(0x00, opcode,  TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H, 0x00);
 
         cpu->PSW = true_flags;
 
@@ -242,7 +232,7 @@ void assert_call_function_cond(struct cpustate* cpu, uint8_t opcode, uint8_t tru
         munit_assert_int(cpu->PC, ==, TEST_MEMORY_ROM_HL); // Current PC should point to new address
         printf("Memory: 0x%02X 0x%02X\n", program[cpu->SP + 1], program[cpu->SP + 2]);
         munit_assert_int(program[cpu->SP], ==, 0x00); // Stack should hold hi of return address
-        munit_assert_int(program[cpu->SP + 1], ==, 0x01); // Stack + 1 should hold lo of return address
+        munit_assert_int(program[cpu->SP + 1], ==, 0x01 + 0x03); // Stack + 1 should hold lo of return address + 3 (the next instruction after the original call)
     }
 
     // Test true condition and make sure stack doesn't underflow

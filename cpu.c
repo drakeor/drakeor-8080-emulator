@@ -33,6 +33,7 @@ int do_call_inst(struct cpustate* cpu, uint8_t opcode, uint8_t* memory, uint16_t
         PANIC("%02X instruction will write into ROM", opcode);
 
     // We need to store the next instruction after CALL to prevent RET from invoking an infinite loop
+    cpu->PC = cpu->PC + 3;
     memory[cpu->SP - 1] = (0xFF & cpu->PC);
     memory[cpu->SP - 2] = cpu->PC >> 8;
     cpu->SP -= 2;
