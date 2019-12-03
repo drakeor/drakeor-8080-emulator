@@ -5,7 +5,7 @@
  * Helper macros
  */
 // Helper macro for panic
-#define PANIC(...) { printf("\npanic: "); printf(__VA_ARGS__); dump_registers(cpu); if(DUMP_VRAM_ON_PANIC) { vram_to_bmp(); printf("vram dumped to file."); } return -1; }
+#define PANIC(...) { printf("\nPANIC: "); printf(__VA_ARGS__); dump_registers(cpu); if(DUMP_VRAM_ON_PANIC) { vram_to_bmp(); printf("vram dumped to file."); } return -1; }
 // Helper to check if we have enough program space
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 // Populates x with the next byte of information
@@ -849,7 +849,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 PANIC("C9 instruction will underflow stack");
             
             // Pop address off stack in correct memory order. 
-            cpu->PC = memory[cpu->SP + 1] | (memory[cpu->SP] << 8);
+            cpu->PC = memory[cpu->SP + 1] | ((memory[cpu->SP] << 8) & 0xFF00);
             cpu->SP = cpu->SP + 2;
             break;
 
@@ -1000,7 +1000,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
                 PANIC("%02X instruction will underflow stack", memory[cpu->PC]);
             src_byte = 0b00000011 & (memory[cpu->PC] >> 4);
             (*regpair_pushpop_mapping[src_byte]) =
-                (memory[cpu->SP] << 8) | memory[cpu->SP+1];
+                ((memory[cpu->SP+1] << 8) & 0xFF00) | memory[cpu->SP];
             cpu->SP = cpu->SP + 2;
             cpu->PC = cpu->PC + 1;
             break;
