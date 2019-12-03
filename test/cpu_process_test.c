@@ -1273,70 +1273,61 @@ MunitResult
  * PUSH commands
  */
 MunitResult
-    test_cpuprocess_D5(const MunitParameter params[], void* fixture)
+    test_cpuprocess_push(const MunitParameter params[], void* fixture)
 {
     // Doing this allows our macros to work
     struct cpustate r_cpu;
     struct cpustate* cpu = &r_cpu;
 
-    // Make sure opcode works as expected
-    {
-        SETUP_TEST_1(0xD5);
-        cpu->D = TEST_MEMORY_ROM_L;
-        cpu->E = TEST_MEMORY_ROM_H;
+    // This is DIFFERENT that SP is actually PSW as we can't push/pop SP
+    // We're gonna leave PSW out for now and get back to it later since the
+    // logic is slightly different
+    uint16_t *regpair_pushpop_mapping[3] = {
+        &(r_cpu.BC),
+        &(r_cpu.DE),
+        &(r_cpu.HL)  
+    };
+    char *regpair_pushpop_naming[3] = {
+        "BC",
+        "DE",
+        "HL"
+    };
 
-        TEST_SUCCESS_OPCODE();
+    uint8_t i = 0;
+    for(i = 0; i < 3; i++) {
+        // Build the opcode
+        uint8_t dst_byte = 0b00110000 & (i << 4);
+        uint8_t opcode = 0b11000101 | dst_byte;
 
-        munit_assert_int(cpu->SP, ==, STACK_START - 2);
-        munit_assert_int(program[STACK_START-1], ==, cpu->D);
-        munit_assert_int(program[STACK_START-2], ==, cpu->E);
+         // Make sure opcode works as expected
+        {
+            SETUP_TEST_1(opcode);
+            (*regpair_pushpop_mapping[i]) = TEST_MEMORY_ROM_LH;
+
+            printf("Testing Opcode %02X (REG %s) works\n", opcode, regpair_pushpop_naming[i]);
+            TEST_SUCCESS_OPCODE();
+
+            munit_assert_int(cpu->SP, ==, STACK_START - 2);
+            munit_assert_int(program[STACK_START-1], ==, TEST_MEMORY_ROM_L);
+            munit_assert_int(program[STACK_START-2], ==, TEST_MEMORY_ROM_H);
+        }
+
+        // Make sure opcode doesn't underflow
+        {
+            SETUP_TEST_1(opcode);
+            cpu->SP = TEST_MEMORY_ROM_HL;
+            (*regpair_pushpop_mapping[i]) = TEST_MEMORY_ROM_LH;
+
+            printf("Testing Opcode %02X (REG %s) underflow\n", opcode, regpair_pushpop_naming[i]);
+            TEST_FAIL_GENERIC();
+
+            munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL);
+        }
     }
-
-    // Make sure opcode doesn't underflow
-    {
-        SETUP_TEST_1(0xD5);
-        cpu->SP = TEST_MEMORY_ROM_HL;
-        cpu->D = TEST_MEMORY_ROM_L;
-        cpu->E = TEST_MEMORY_ROM_H;
-
-        TEST_FAIL_GENERIC();
-
-        munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL);
-    }
+    
+    return MUNIT_OK;
 }
 
-MunitResult
-    test_cpuprocess_E5(const MunitParameter params[], void* fixture)
-{
-    // Doing this allows our macros to work
-    struct cpustate r_cpu;
-    struct cpustate* cpu = &r_cpu;
-
-    // Make sure opcode works as expected
-    {
-        SETUP_TEST_1(0xE5);
-        cpu->H = TEST_MEMORY_ROM_L;
-        cpu->L = TEST_MEMORY_ROM_H;
-
-        TEST_SUCCESS_OPCODE();
-
-        munit_assert_int(cpu->SP, ==, STACK_START - 2);
-        munit_assert_int(program[STACK_START-1], ==, cpu->H);
-        munit_assert_int(program[STACK_START-2], ==, cpu->L);
-    }
-
-    // Make sure opcode doesn't underflow
-    {
-        SETUP_TEST_1(0xE5);
-        cpu->SP = TEST_MEMORY_ROM_HL;
-        cpu->H = TEST_MEMORY_ROM_L;
-        cpu->L = TEST_MEMORY_ROM_H;
-
-        TEST_FAIL_GENERIC();
-
-        munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL);
-    }
-}
 
 MunitResult
     test_cpuprocess_dad(const MunitParameter params[], void* fixture)
@@ -1485,3 +1476,5 @@ MunitResult
     TEST_SUCCESS_BYTE();
     return MUNIT_OK;
 }
+
+

@@ -176,6 +176,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xFE: PRINT_BYTE("CPI,"); break;
 
         // PUSH instructions
+        case 0xC5: PRINT_OP("PUSH B"); break;
         case 0xD5: PRINT_OP("PUSH D"); break;
         case 0xE5: PRINT_OP("PUSH E"); break;
 

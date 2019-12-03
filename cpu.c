@@ -942,6 +942,16 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 2;
             break;
 
+        // PUSH B
+        case 0xC5:
+            if(cpu->SP < ROM_SIZE + 2)
+                PANIC("0xC5 instruction will write into ROM");
+            memory[cpu->SP - 2] = cpu->C;
+            memory[cpu->SP - 1] = cpu->B;
+            cpu->SP = cpu->SP - 2;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // PUSH D
         case 0xD5:
             if(cpu->SP < ROM_SIZE + 2)

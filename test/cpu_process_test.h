@@ -222,10 +222,8 @@ MunitResult
  * PUSH commands
  */
 MunitResult
-    test_cpuprocess_D5(const MunitParameter params[], void* fixture);
-MunitResult
-    test_cpuprocess_E5(const MunitParameter params[], void* fixture);
-
+    test_cpuprocess_push(const MunitParameter params[], void* fixture);
+    
 /*
  * DAD instructions
  */

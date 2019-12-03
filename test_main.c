@@ -235,9 +235,7 @@ MunitTest tests[] = {
     /*
      * PUSH instructions
      */
-    {"/cpu_process/D5",test_cpuprocess_D5, 
-        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-    {"/cpu_process/E5",test_cpuprocess_E5, 
+    {"/cpu_process/push_instructions",test_cpuprocess_push, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     /*
