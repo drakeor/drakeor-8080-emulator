@@ -107,6 +107,20 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
         "SP"
     };
 
+    // This is DIFFERENT that SP is actually PSW as we can't push/pop SP
+    // We're gonna leave PSW out for now and get back to it later since the
+    // logic is slightly different
+    uint16_t *regpair_pushpop_mapping[3] = {
+        &(cpu->BC),
+        &(cpu->DE),
+        &(cpu->HL)  
+    };
+    char *regpair_pushpop_naming[3] = {
+        "BC",
+        "DE",
+        "HL"
+    };
+
     // Temp 8-bit data
     uint8_t src_byte = 0;
     uint8_t dst_byte = 0;
@@ -965,6 +979,19 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             tmp = cpu->HL;
             cpu->HL = cpu->DE;
             cpu->DE = tmp;
+            cpu->PC = cpu->PC + 1;
+            break;
+
+        // POP instructions
+        case 0xC1:
+        case 0xD1: 
+        case 0xE1: 
+            if(cpu->SP > STACK_START-2)
+                PANIC("%02X instruction will underflow stack", memory[cpu->PC]);
+            src_byte = 0b00000011 & (memory[cpu->PC] >> 4);
+            (*regpair_pushpop_mapping[src_byte]) =
+                (memory[cpu->SP] << 8) | memory[cpu->SP+1];
+            cpu->SP = cpu->SP + 2;
             cpu->PC = cpu->PC + 1;
             break;
 

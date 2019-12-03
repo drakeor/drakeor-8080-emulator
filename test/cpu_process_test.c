@@ -1414,3 +1414,60 @@ MunitResult
     munit_assert_int(cpu->HL, ==, 0xAA34);
     munit_assert_int(cpu->DE, ==, 0xD51A);
 }
+
+MunitResult
+    test_cpuprocess_pop(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // This is DIFFERENT that SP is actually PSW as we can't push/pop SP
+    // We're gonna leave PSW out for now and get back to it later since the
+    // logic is slightly different
+    uint16_t *regpair_pushpop_mapping[3] = {
+        &(r_cpu.BC),
+        &(r_cpu.DE),
+        &(r_cpu.HL)  
+    };
+    char *regpair_pushpop_naming[3] = {
+        "BC",
+        "DE",
+        "HL"
+    };
+
+    uint8_t i = 0;
+    for(i = 0; i < 3; i++) {
+
+         // Build the opcode
+        uint8_t dst_byte = 0b00110000 & (i << 4);
+        uint8_t opcode = 0b11000001 | dst_byte;
+
+        printf("Testing Opcode %02X (REG %s) Carry\n", opcode, regpair_pushpop_naming[i]);
+
+        // Ensure pops correctly
+        {
+            // Clear out registers and set the src one in question
+            SETUP_TEST_1(opcode);
+
+            cpu->SP = cpu->SP - 2;
+            program[cpu->SP] = TEST_MEMORY_RAM_L;
+            program[cpu->SP+1] = TEST_MEMORY_RAM_H;
+
+            TEST_SUCCESS_OPCODE();
+
+            munit_assert_int(cpu->SP, ==, STACK_START);  
+            munit_assert_int((*regpair_pushpop_mapping[i]), ==, TEST_MEMORY_RAM_LH);  
+        }
+
+        // Ensure stack doesn't underflow
+        {
+             // Clear out registers and set the src one in question
+            SETUP_TEST_1(opcode);
+            TEST_FAIL_GENERIC();
+            munit_assert_int(cpu->SP, ==, STACK_START);  
+        }
+    }
+
+    return MUNIT_OK;
+}

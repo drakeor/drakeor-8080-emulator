@@ -237,4 +237,12 @@ MunitResult
  */
   MunitResult
     test_cpuprocess_EB(const MunitParameter params[], void* fixture);
+
+
+/*
+ * POP instructions
+ */
+  MunitResult
+    test_cpuprocess_pop(const MunitParameter params[], void* fixture);
+
 #endif

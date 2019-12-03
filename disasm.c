@@ -175,7 +175,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         // CPI
         case 0xFE: PRINT_BYTE("CPI,"); break;
 
-        // PUSH D
+        // PUSH instructions
         case 0xD5: PRINT_OP("PUSH D"); break;
         case 0xE5: PRINT_OP("PUSH E"); break;
 
@@ -187,6 +187,11 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
 
         // XCHG instruction
         case 0xEB: PRINT_OP("XCHG"); break;
+
+        // POP instructions
+        case 0xC1: PRINT_OP("POP B"); break;
+        case 0xD1: PRINT_OP("POP D"); break;
+        case 0xE1: PRINT_OP("POP H"); break;
 
         // Unknown
         default:
