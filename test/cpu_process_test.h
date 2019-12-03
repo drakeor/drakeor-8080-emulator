@@ -226,4 +226,10 @@ MunitResult
 MunitResult
     test_cpuprocess_E5(const MunitParameter params[], void* fixture);
 
+/*
+ * DAD instructions
+ */
+ MunitResult
+    test_cpuprocess_dad(const MunitParameter params[], void* fixture);
+
 #endif

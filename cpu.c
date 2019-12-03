@@ -67,6 +67,10 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
         PANIC("pc counter overflowed");
     }
 
+    // Temp 32-bit register
+    uint32_t tmp32;
+    tmp32 = 0;
+
     // Temp 16-bit register
     uint16_t tmp;
     tmp = 0;
@@ -87,9 +91,25 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
         &(cpu->A),      
     };
 
+    // Regpair mappings
+    uint16_t *regpair_mapping[4] = {
+        &(cpu->BC),
+        &(cpu->DE),
+        &(cpu->HL),
+        &(cpu->SP),    
+    };
+
+    // Regpair names
+    char *regpair_naming[4] = {
+        "BC",
+        "DE",
+        "HL",
+        "SP"
+    };
+
     // Temp 8-bit data
-    uint8_t src_byte = 0b00000111 & memory[cpu->PC];
-    uint8_t dst_byte = 0b00000111 & (memory[cpu->PC] >> 3);
+    uint8_t src_byte = 0;
+    uint8_t dst_byte = 0;
 
     switch(memory[cpu->PC]) {
         
@@ -925,6 +945,18 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             memory[cpu->SP - 2] = cpu->L;
             memory[cpu->SP - 1] = cpu->H;
             cpu->SP = cpu->SP - 2;
+            cpu->PC = cpu->PC + 1;
+            break;
+
+        // DAD Instructions
+        case 0x09:
+        case 0x19: 
+        case 0x29:
+        case 0x39:
+            src_byte = 0b00000011 & (memory[cpu->PC] >> 4);
+            tmp32 = cpu->HL + (*regpair_mapping[src_byte]);
+            cpu->HL = 0xFFFF & tmp32;
+            cpu->FLAGS.C = (tmp32 >> 16) & 0x1;
             cpu->PC = cpu->PC + 1;
             break;
 

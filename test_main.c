@@ -240,6 +240,12 @@ MunitTest tests[] = {
     {"/cpu_process/E5",test_cpuprocess_E5, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * DAD instructions
+     */
+    {"/cpu_process/dad_instructions",test_cpuprocess_dad, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

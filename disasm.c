@@ -179,6 +179,12 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xD5: PRINT_OP("PUSH D"); break;
         case 0xE5: PRINT_OP("PUSH E"); break;
 
+        // DAD Instructions
+        case 0x09: PRINT_OP("DAD B"); break;
+        case 0x19: PRINT_OP("DAD D"); break;
+        case 0x29: PRINT_OP("DAD H"); break;
+        case 0x39: PRINT_OP("DAD SP"); break;
+        
         // Unknown
         default:
             PRINT_OP("???");

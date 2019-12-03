@@ -1337,3 +1337,64 @@ MunitResult
         munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL);
     }
 }
+
+ MunitResult
+    test_cpuprocess_dad(const MunitParameter params[], void* fixture)
+{
+    
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // Helper array to map bits to registers
+    uint16_t *regpair_mapping[4] = {
+        &(r_cpu.BC),
+        &(r_cpu.DE),
+        &(r_cpu.HL),
+        &(r_cpu.SP),    
+    };
+
+    // Register names
+    char *regpair_naming[4] = {
+        "BC",
+        "DE",
+        "HL",
+        "SP"
+    };
+
+    uint8_t i = 0;
+    for(i = 0; i < 4; i++) {
+
+         // Build the opcode
+        uint8_t dst_byte = 0b00110000 & (i << 4);
+        uint8_t opcode = 0b00001001 | dst_byte;
+
+        // 42F0‬ + 42F0‬ = ‭85E0 ‬(No carry)
+        {
+            // Clear out registers and set the src one in question
+            SETUP_TEST_1(opcode);
+            cpu->HL = 0x42F0;
+            (*regpair_mapping[i]) = 0x42F0;
+
+            // Run opcode and make sure the source matches the destination opcode
+            printf("Testing Opcode %02X (REG %s) No Carry\n", opcode, regpair_naming[i]);
+            TEST_SUCCESS_OPCODE();
+            munit_assert_int(cpu->HL, ==, 0x85E0);
+            munit_assert_int(cpu->FLAGS.C, ==, 0);
+        }
+
+        // D51A + D51A = AA34‬ (Carry)
+        {
+            // Clear out registers and set the src one in question
+            SETUP_TEST_1(opcode);
+            cpu->HL = 0xD51A;
+            (*regpair_mapping[i]) = 0xD51A;
+
+            // Run opcode and make sure the source matches the destination opcode
+            printf("Testing Opcode %02X (REG %s) Carry\n", opcode, regpair_naming[i]);
+            TEST_SUCCESS_OPCODE();
+            munit_assert_int(cpu->HL, ==, 0xAA34);
+            munit_assert_int(cpu->FLAGS.C, ==, 1);
+        }
+    }
+}
