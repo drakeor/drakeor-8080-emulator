@@ -995,6 +995,13 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 1;
             break;
 
+        // OUT instruction
+        // We're just going to pretend to write out and log the event
+        case 0xD3:
+            printf("> OUT (%02X) -> %02X (A)\n", memory[cpu->PC], cpu->A);
+            cpu->PC = cpu->PC + 2;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

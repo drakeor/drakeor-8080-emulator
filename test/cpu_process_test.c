@@ -1471,3 +1471,17 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+// OUT instruction emulation
+MunitResult
+    test_cpuprocess_D3(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // Just make sure it runs for now i guess
+    SETUP_TEST_2(0xD3, 0b10100000);
+    TEST_SUCCESS_BYTE();
+    return MUNIT_OK;
+}

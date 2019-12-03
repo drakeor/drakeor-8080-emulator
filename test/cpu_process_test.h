@@ -229,20 +229,25 @@ MunitResult
 /*
  * DAD instructions
  */
- MunitResult
+MunitResult
     test_cpuprocess_dad(const MunitParameter params[], void* fixture);
 
 /*
  * XCHG instruction
  */
-  MunitResult
+MunitResult
     test_cpuprocess_EB(const MunitParameter params[], void* fixture);
 
 
 /*
  * POP instructions
  */
-  MunitResult
+MunitResult
     test_cpuprocess_pop(const MunitParameter params[], void* fixture);
 
+/*
+ * OUT instruction
+ */ 
+MunitResult
+    test_cpuprocess_D3(const MunitParameter params[], void* fixture);
 #endif

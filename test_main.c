@@ -258,6 +258,12 @@ MunitTest tests[] = {
     {"/cpu_process/pop_instructions",test_cpuprocess_pop, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * OUT instruction
+     */
+     {"/cpu_process/D3",test_cpuprocess_D3, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
