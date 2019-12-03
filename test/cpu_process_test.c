@@ -1448,7 +1448,7 @@ MunitResult
             TEST_SUCCESS_OPCODE();
 
             munit_assert_int(cpu->SP, ==, STACK_START);  
-            munit_assert_int((*regpair_pushpop_mapping[i]), ==, TEST_MEMORY_RAM_LH);  
+            munit_assert_int((*regpair_pushpop_mapping[i]), ==, TEST_MEMORY_RAM_HL);  
         }
 
         // Ensure stack doesn't underflow

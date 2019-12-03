@@ -16,7 +16,7 @@ int main()
     printf("Starting..\n");
 
     unsigned int instruction_count = 1;
-    unsigned int max_instruction_count = 37397;
+    unsigned int max_instruction_count = 0xFFFFFF;
 
     // Main program loop
     while(!process_cpu(&cpu, prom, MEMORY_SIZE))
