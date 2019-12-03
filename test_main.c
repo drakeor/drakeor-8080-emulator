@@ -246,6 +246,12 @@ MunitTest tests[] = {
     {"/cpu_process/dad_instructions",test_cpuprocess_dad, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * XCHG instructions
+     */
+     {"/cpu_process/EB",test_cpuprocess_EB, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

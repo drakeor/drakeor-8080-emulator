@@ -232,4 +232,9 @@ MunitResult
  MunitResult
     test_cpuprocess_dad(const MunitParameter params[], void* fixture);
 
+/*
+ * XCHG instruction
+ */
+  MunitResult
+    test_cpuprocess_EB(const MunitParameter params[], void* fixture);
 #endif

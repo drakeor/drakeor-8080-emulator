@@ -960,6 +960,14 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 1;
             break;
 
+        // XCHG instruction
+        case 0xEB: 
+            tmp = cpu->HL;
+            cpu->HL = cpu->DE;
+            cpu->DE = tmp;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

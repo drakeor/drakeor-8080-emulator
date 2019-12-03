@@ -184,7 +184,10 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x19: PRINT_OP("DAD D"); break;
         case 0x29: PRINT_OP("DAD H"); break;
         case 0x39: PRINT_OP("DAD SP"); break;
-        
+
+        // XCHG instruction
+        case 0xEB: PRINT_OP("XCHG"); break;
+
         // Unknown
         default:
             PRINT_OP("???");

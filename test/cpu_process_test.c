@@ -1338,7 +1338,7 @@ MunitResult
     }
 }
 
- MunitResult
+MunitResult
     test_cpuprocess_dad(const MunitParameter params[], void* fixture)
 {
     
@@ -1397,4 +1397,20 @@ MunitResult
             munit_assert_int(cpu->FLAGS.C, ==, 1);
         }
     }
+}
+
+MunitResult
+    test_cpuprocess_EB(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    SETUP_TEST_1(0xEB);
+    cpu->HL = 0xD51A;
+    cpu->DE = 0xAA34;
+
+    TEST_SUCCESS_OPCODE();
+    munit_assert_int(cpu->HL, ==, 0xAA34);
+    munit_assert_int(cpu->DE, ==, 0xD51A);
 }
