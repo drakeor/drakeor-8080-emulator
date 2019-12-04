@@ -37,7 +37,7 @@ int main()
     // Dump final state of the CPU and VRAM
     dump_registers(&cpu);
     if(DUMP_VRAM_ON_PANIC) { 
-        vram_to_bmp(); 
+        vram_to_bmp(prom, MEMORY_SIZE); 
         printf("vram dumped to file.\n"); 
     }
 

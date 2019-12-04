@@ -12,6 +12,6 @@
 /*
  * Dumps vram to a bmp file.
  */
-int vram_to_bmp();
+int vram_to_bmp(uint8_t* memory, uint16_t memory_size);
 
 #endif

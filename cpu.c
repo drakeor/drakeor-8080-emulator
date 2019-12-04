@@ -5,7 +5,7 @@
  * Helper macros
  */
 // Helper macro for panic
-#define PANIC(...) { printf("\nPANIC: "); printf(__VA_ARGS__); dump_registers(cpu); if(DUMP_VRAM_ON_PANIC) { vram_to_bmp(); printf("vram dumped to file."); } return -1; }
+#define PANIC(...) { printf("\nPANIC: "); printf(__VA_ARGS__); dump_registers(cpu); if(DUMP_VRAM_ON_PANIC) { vram_to_bmp(prom, MEMORY_SIZE); printf("vram dumped to file."); } return -1; }
 // Helper to check if we have enough program space
 #define CHECK_BUFFER(x) { if(cpu->PC+x >= memory_size) PANIC("%02X instruction overflows buffer", cpu->PC); }
 // Populates x with the next byte of information
