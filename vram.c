@@ -52,9 +52,7 @@ int vram_to_bmp(uint8_t* memory, uint16_t memory_size) {
 
             // Grab the first 8 bits of the row
             unsigned char PIXEL = memory[VRAM_START + x + (y * vram_dim_x_bytes)];
-            if(PIXEL != 0x0) {
-                printf("RAWR \n");
-            }
+  
             // Loop through each bit and write to the BMP file
             for(int i=0; i<8; i++) {
                 if(((PIXEL << i) & 0x80) == 0x80) {
