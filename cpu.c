@@ -1076,6 +1076,25 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 2;
             break;
 
+        /*
+         * Register rotation functions
+         */
+         // RLC
+        case 0x07:
+            tmp8 = (cpu->A >> 7) & 0x1;
+            cpu->A = cpu->A << 1 | tmp8;
+            cpu->FLAGS.C = tmp8;
+            cpu->PC = cpu->PC + 1;
+            break;
+
+        // RRC
+        case 0x0F:
+            tmp8 = cpu->A & 0x1;
+            cpu->A = cpu->A >> 1 | (tmp8 << 7);
+            cpu->FLAGS.C = tmp8;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

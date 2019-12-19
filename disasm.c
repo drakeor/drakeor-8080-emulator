@@ -189,7 +189,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xD5: PRINT_OP("PUSH D"); break;
         case 0xE5: PRINT_OP("PUSH E"); break;
         case 0xF5: PRINT_OP("PUSH PSW"); break;
-        
+
         // DAD Instructions
         case 0x09: PRINT_OP("DAD B"); break;
         case 0x19: PRINT_OP("DAD D"); break;
@@ -203,6 +203,10 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xC1: PRINT_OP("POP B"); break;
         case 0xD1: PRINT_OP("POP D"); break;
         case 0xE1: PRINT_OP("POP H"); break;
+
+        // Register Rotations
+        case 0x07: PRINT_OP("RLC"); break;
+        case 0x0F: PRINT_OP("RRC"); break;
 
         // Unknown
         default:

@@ -1564,7 +1564,9 @@ MunitResult
 
     // RLC Command
     {
+        printf("\nTesting Opcode 0x07\n");
         SETUP_TEST_1(0x07);
+        // A << 1, Bit 0 of A is previous bit 7 of A. Bit 7 is assigned to carry flag.
         cpu->A = TEST_MEMORY_BYTE;
         uint8_t prev_bit_7 = ((TEST_MEMORY_BYTE >> 7) & 0x1);
         uint8_t rotated_test_byte = (((uint8_t)TEST_MEMORY_BYTE) << 1) | prev_bit_7; 
@@ -1574,4 +1576,19 @@ MunitResult
         munit_assert_int(cpu->FLAGS.C, ==, prev_bit_7);
     }
 
+    // RRC Command
+    {
+        printf("Testing Opcode 0x0F\n");
+        SETUP_TEST_1(0x0F);
+        // A << 1, Bit 7 of A is previous bit 0 of A. Bit 0 is assigned to carry flag.
+        cpu->A = TEST_MEMORY_BYTE;
+        uint8_t prev_bit_0 = TEST_MEMORY_BYTE & 0x1;
+        uint8_t rotated_test_byte = (((uint8_t)TEST_MEMORY_BYTE) >> 1) | (prev_bit_0 << 7); 
+        TEST_SUCCESS_OPCODE();
+
+        munit_assert_int(cpu->A, ==, rotated_test_byte);  
+        munit_assert_int(cpu->FLAGS.C, ==, prev_bit_0);
+    }
+
+    return MUNIT_OK;
 }
