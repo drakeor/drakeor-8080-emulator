@@ -281,7 +281,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 
 
         /*
-         * MOV from memory to A 
+         * MOV from memory to register
          */
 
         // 0x7E - Load HL to A
@@ -291,6 +291,10 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->A = memory[cpu->HL]; 
             cpu->PC += 1;
             break;
+
+        /*
+         * MOV from memory to A 
+         */
 
         // 0x7E - Load BC to A
         case 0x0A:

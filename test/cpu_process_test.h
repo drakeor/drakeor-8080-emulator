@@ -84,7 +84,11 @@ MunitResult
  * MOV from memory to register
  */
 MunitResult
-    test_cpuprocess_7E(const MunitParameter params[], void* fixture);
+    test_cpuprocess_memory_to_register(const MunitParameter params[], void* fixture);
+
+/*
+* MOV from memory to A
+*/
 MunitResult
     test_cpuprocess_0A(const MunitParameter params[], void* fixture);
 MunitResult

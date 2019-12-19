@@ -90,10 +90,14 @@ MunitTest tests[] = {
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     /*
+    * MOV from memory to register
+    */
+    {"/cpu_process/memory_to_register",test_cpuprocess_memory_to_register, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+
+    /*
      * MOV from memory to A
      */
-    {"/cpu_process/7E",test_cpuprocess_7E, 
-        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu_process/0A",test_cpuprocess_0A, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     {"/cpu_process/1A",test_cpuprocess_1A, 

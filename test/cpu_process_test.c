@@ -342,6 +342,63 @@ MunitResult
     return MUNIT_OK;
 }
 
+/*
+ * MOV from memory to registers functions
+ */
+MunitResult
+    test_cpuprocess_memory_to_register(const MunitParameter params[], void* fixture)
+{
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // Helper array to map bits to registers
+    char *reg_mapping[8] = {
+        &(r_cpu.B),
+        &(r_cpu.C),
+        &(r_cpu.D),
+        &(r_cpu.E),
+        &(r_cpu.H),
+        &(r_cpu.L),
+        NULL,
+        &(r_cpu.A),      
+    };
+
+    // Register names
+    char *reg_naming[8] = {
+        "B",
+        "C",
+        "D",
+        "E",
+        "H",
+        "L",
+        "Invalid",
+        "A"
+    };
+
+    // Run through each possible combination of register moves
+   uint8_t dst = 0;
+   for(dst = 0; dst < 8; dst++) {
+        // Ignore the invalid move.
+        if(dst != 6) {
+
+            // Build the opcode
+            uint8_t dst_byte = 0b00111000 & (dst << 3);
+            uint8_t opcode = 0b01000110 | dst_byte;
+
+            // Clear out registers and set the src one in question
+            SETUP_TEST_1(opcode);
+            program[TEST_MEMORY_RAM_HL] = TEST_MEMORY_BYTE;
+            cpu->HL = TEST_MEMORY_RAM_HL;
+
+            // Run opcode and make sure the source matches the destination opcode
+            printf("Testing opcode %02X (MOV %s from (HL))\n", opcode, reg_naming[dst]);
+            TEST_SUCCESS_OPCODE();
+            munit_assert_int(TEST_MEMORY_BYTE, ==, (*reg_mapping[dst]));
+        }
+    }
+    return MUNIT_OK;
+
+}
 
 /*
  * MOV from memory to A functions
@@ -372,15 +429,6 @@ void assert_transfer_a_frommem(struct cpustate* cpu, uint8_t opcode, uint16_t* r
 
         munit_assert_int(cpu->A, !=, TEST_MEMORY_BYTE);    // A shouldn't contain the memory loaded
     }
-}
-
-// Load HL to A
-MunitResult
-    test_cpuprocess_7E(const MunitParameter params[], void* fixture)
-{
-    struct cpustate cpu;
-    assert_transfer_a_frommem(&cpu, 0x7E, &cpu.HL);
-    return MUNIT_OK;
 }
 
 // Load BC to A

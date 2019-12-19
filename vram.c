@@ -30,14 +30,14 @@ int vram_to_bmp(uint8_t* memory, uint16_t memory_size) {
     bmpfileheader[ 4] = (unsigned char)(filesize>>16);
     bmpfileheader[ 5] = (unsigned char)(filesize>>24);
 
-    bmpinfoheader[ 4] = (unsigned char)(       VRAM_DIM_X    );
-    bmpinfoheader[ 5] = (unsigned char)(       VRAM_DIM_X>> 8);
-    bmpinfoheader[ 6] = (unsigned char)(       VRAM_DIM_X>>16);
-    bmpinfoheader[ 7] = (unsigned char)(       VRAM_DIM_X>>24);
-    bmpinfoheader[ 8] = (unsigned char)(       VRAM_DIM_Y    );
-    bmpinfoheader[ 9] = (unsigned char)(       VRAM_DIM_Y>> 8);
-    bmpinfoheader[10] = (unsigned char)(       VRAM_DIM_Y>>16);
-    bmpinfoheader[11] = (unsigned char)(       VRAM_DIM_Y>>24);
+    bmpinfoheader[ 4] = (unsigned char)(VRAM_DIM_X    );
+    bmpinfoheader[ 5] = (unsigned char)(VRAM_DIM_X>> 8);
+    bmpinfoheader[ 6] = (unsigned char)(VRAM_DIM_X>>16);
+    bmpinfoheader[ 7] = (unsigned char)(VRAM_DIM_X>>24);
+    bmpinfoheader[ 8] = (unsigned char)(VRAM_DIM_Y    );
+    bmpinfoheader[ 9] = (unsigned char)(VRAM_DIM_Y>> 8);
+    bmpinfoheader[10] = (unsigned char)(VRAM_DIM_Y>>16);
+    bmpinfoheader[11] = (unsigned char)(VRAM_DIM_Y>>24);
 
     f = fopen("vram.bmp","wb");
     fwrite(bmpfileheader,1,14,f);
