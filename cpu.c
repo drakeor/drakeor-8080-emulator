@@ -1026,6 +1026,16 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 1;
             break;
 
+        // PUSH PSW
+        case 0xF5:
+            if(cpu->SP < ROM_SIZE + 2)
+                PANIC("0xF5 instruction will write into ROM");
+            memory[cpu->SP - 2] = cpu->PSW;
+            memory[cpu->SP - 1] = cpu->A;
+            cpu->SP = cpu->SP - 2;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // DAD Instructions
         case 0x09:
         case 0x19: 

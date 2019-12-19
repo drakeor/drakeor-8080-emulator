@@ -1331,7 +1331,7 @@ MunitResult
     // We're gonna leave PSW out for now and get back to it later since the
     // logic is slightly different
     uint16_t *regpair_pushpop_mapping[3] = {
-        &(r_cpu.BC),
+        &(r_cpu.BC), 
         &(r_cpu.DE),
         &(r_cpu.HL)  
     };
@@ -1376,6 +1376,33 @@ MunitResult
     return MUNIT_OK;
 }
 
+MunitResult
+    test_cpuprocess_push_psw(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // Test for success
+    {
+        SETUP_TEST_1(0xF5);
+        cpu->PSW = TEST_MEMORY_BYTE;
+        cpu->A = TEST_MEMORY_BYTE & 0x0F;
+
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int(cpu->SP, ==, STACK_START - 2);
+        munit_assert_int(program[STACK_START-1], ==, TEST_MEMORY_BYTE & 0x0F);
+        munit_assert_int(program[STACK_START-2], ==, TEST_MEMORY_BYTE);
+    }
+
+    // Test for underflow
+    {
+        SETUP_TEST_1(0xF5);
+        cpu->SP = TEST_MEMORY_ROM_HL;
+        TEST_FAIL_GENERIC();
+        munit_assert_int(cpu->SP, ==, TEST_MEMORY_ROM_HL);
+    }
+}
 
 MunitResult
     test_cpuprocess_dad(const MunitParameter params[], void* fixture)

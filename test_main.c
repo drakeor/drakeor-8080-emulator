@@ -241,6 +241,8 @@ MunitTest tests[] = {
      */
     {"/cpu_process/push_instructions",test_cpuprocess_push, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/push_psw",test_cpuprocess_push_psw, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     /*
      * DAD instructions

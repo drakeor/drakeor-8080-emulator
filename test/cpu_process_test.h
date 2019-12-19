@@ -227,7 +227,9 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_push(const MunitParameter params[], void* fixture);
-    
+MunitResult
+    test_cpuprocess_push_psw(const MunitParameter params[], void* fixture);
+
 /*
  * DAD instructions
  */
