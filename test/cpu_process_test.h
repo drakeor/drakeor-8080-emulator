@@ -254,4 +254,11 @@ MunitResult
  */ 
 MunitResult
     test_cpuprocess_D3(const MunitParameter params[], void* fixture);
+
+/*
+ * Register Rotation Instructions
+ */
+ MunitResult
+    test_cpuprocess_register_rotations(const MunitParameter params[], void* fixture);
+
 #endif

@@ -1552,4 +1552,26 @@ MunitResult
     return MUNIT_OK;
 }
 
+/*
+ * Register Rotation Instructions
+ */
+ MunitResult
+    test_cpuprocess_register_rotations(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
 
+    // RLC Command
+    {
+        SETUP_TEST_1(0x07);
+        cpu->A = TEST_MEMORY_BYTE;
+        uint8_t prev_bit_7 = ((TEST_MEMORY_BYTE >> 7) & 0x1);
+        uint8_t rotated_test_byte = (((uint8_t)TEST_MEMORY_BYTE) << 1) | prev_bit_7; 
+        TEST_SUCCESS_OPCODE();
+
+        munit_assert_int(cpu->A, ==, rotated_test_byte);  
+        munit_assert_int(cpu->FLAGS.C, ==, prev_bit_7);
+    }
+
+}

@@ -268,6 +268,12 @@ MunitTest tests[] = {
      {"/cpu_process/D3",test_cpuprocess_D3, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
+    /*
+     * Register Rotation Instructions
+     */
+    {"/cpu_process/register_rotations", test_cpuprocess_register_rotations,
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
