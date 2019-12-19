@@ -284,6 +284,56 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
          * MOV from memory to register
          */
 
+
+        // 0x46 - Load HL to B
+        case 0x46:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->B = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+        
+        // 0x4E - Load HL to C
+        case 0x4E:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->C = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+
+        // 0x56 - Load HL to D
+        case 0x56:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->D = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+
+        // 0x5E - Load HL to E
+        case 0x5E:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->E = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+        
+        // 0x66 - Load HL to H
+        case 0x66:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->H = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+        
+        // 0x6E - Load HL to L
+        case 0x6E:
+            if(cpu->HL >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->L = memory[cpu->HL]; 
+            cpu->PC += 1;
+            break;
+
+        
         // 0x7E - Load HL to A
         case 0x7E:
             if(cpu->HL >= memory_size)

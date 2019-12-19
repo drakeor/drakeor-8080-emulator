@@ -45,8 +45,17 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xF4: PRINT_WORD("CP,"); break;
         case 0xFC: PRINT_WORD("CM,"); break;
 
-        // MOV - Transfer from memory to A
+        // MOV - Transfer from memory to register
+        case 0x46: PRINT_OP("MOV B,(HL)"); break;
+        case 0x4E: PRINT_OP("MOV C,(HL)"); break;
+        case 0x56: PRINT_OP("MOV D,(HL)"); break;
+        case 0x5E: PRINT_OP("MOV E,(HL)"); break;
+        case 0x66: PRINT_OP("MOV H,(HL)"); break;
+        case 0x6E: PRINT_OP("MOV L,(HL)"); break;
         case 0x7E: PRINT_OP("MOV A,(HL)"); break;
+
+
+        // MOV - Transfer from memory to A
         case 0x0A: PRINT_OP("MOV A,(BC)"); break;
         case 0x1A: PRINT_OP("MOV A,(DE)"); break;
 

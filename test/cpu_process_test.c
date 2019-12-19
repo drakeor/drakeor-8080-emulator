@@ -352,7 +352,7 @@ MunitResult
     struct cpustate* cpu = &r_cpu;
 
     // Helper array to map bits to registers
-    char *reg_mapping[8] = {
+    uint8_t *reg_mapping[8] = {
         &(r_cpu.B),
         &(r_cpu.C),
         &(r_cpu.D),
@@ -1227,7 +1227,7 @@ MunitResult
     struct cpustate* cpu = &r_cpu;
 
     // Helper array to map bits to registers
-    char *reg_mapping[8] = {
+    uint8_t *reg_mapping[8] = {
         &(r_cpu.B),
         &(r_cpu.C),
         &(r_cpu.D),
