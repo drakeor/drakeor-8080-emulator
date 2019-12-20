@@ -1528,7 +1528,6 @@ MunitResult
 
         // Ensure stack doesn't underflow
         {
-             // Clear out registers and set the src one in question
             SETUP_TEST_1(opcode);
             TEST_FAIL_GENERIC();
             munit_assert_int(cpu->SP, ==, STACK_START);  
@@ -1536,6 +1535,38 @@ MunitResult
     }
 
     return MUNIT_OK;
+}
+
+// Pop PSW
+MunitResult
+    test_cpuprocess_pop_psw(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+    
+    // Ensure pops correctly
+    {
+        // Clear out registers and set the src one in question
+        SETUP_TEST_1(0xF1);
+
+        cpu->SP = cpu->SP - 2;
+        program[cpu->SP] = TEST_MEMORY_RAM_L;
+        program[cpu->SP+1] = TEST_MEMORY_RAM_H;
+
+        TEST_SUCCESS_OPCODE();
+
+        munit_assert_int(cpu->SP, ==, STACK_START);  
+        munit_assert_int(cpu->PSW, ==, TEST_MEMORY_RAM_L);  
+        munit_assert_int(cpu->A, ==, TEST_MEMORY_RAM_H);  
+    }
+
+    // Ensure stack doesn't underflow
+    {
+        SETUP_TEST_1(0xF1);
+        TEST_FAIL_GENERIC();
+        munit_assert_int(cpu->SP, ==, STACK_START);  
+    }
 }
 
 // OUT instruction emulation

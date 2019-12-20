@@ -248,6 +248,8 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_pop(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_pop_psw(const MunitParameter params[], void* fixture);
 
 /*
  * OUT instruction
@@ -267,5 +269,5 @@ MunitResult
  */
 MunitResult
     test_cpuprocess_bitwise_accumulator(const MunitParameter params[], void* fixture);
-    
+
 #endif

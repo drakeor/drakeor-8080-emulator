@@ -1069,6 +1069,16 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 1;
             break;
 
+        // POP PSW
+        case 0xF1: 
+            if(cpu->SP > STACK_START-2)
+                PANIC("%02X instruction will underflow stack", memory[cpu->PC]);
+            cpu->PSW = memory[cpu->SP];
+            cpu->A = memory[cpu->SP+1];
+            cpu->SP = cpu->SP + 2;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // OUT instruction
         // We're just going to pretend to write out and log the event
         case 0xD3:
@@ -1105,7 +1115,6 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->FLAGS.Z = (cpu->A == 0);
             cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
             cpu->PC = cpu->PC + 2;
-
             break;
 
         case 0xEE: 
@@ -1115,7 +1124,6 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->FLAGS.Z = (cpu->A == 0);
             cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
             cpu->PC = cpu->PC + 2;
-
             break;
 
         case 0xF6: 

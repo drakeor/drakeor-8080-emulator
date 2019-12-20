@@ -261,6 +261,8 @@ MunitTest tests[] = {
      */
     {"/cpu_process/pop_instructions",test_cpuprocess_pop, 
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    {"/cpu_process/pop_psw",test_cpuprocess_pop_psw, 
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 
     /*
      * OUT instruction

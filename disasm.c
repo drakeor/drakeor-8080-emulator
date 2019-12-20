@@ -203,6 +203,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xC1: PRINT_OP("POP B"); break;
         case 0xD1: PRINT_OP("POP D"); break;
         case 0xE1: PRINT_OP("POP H"); break;
+        case 0xC6: PRINT_OP("POP PSW"); break;
 
         // Register Rotations
         case 0x07: PRINT_OP("RLC"); break;
@@ -212,7 +213,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xE6: PRINT_BYTE("ANI,"); break;
         case 0xEE: PRINT_BYTE("XRI,"); break;
         case 0xF6: PRINT_BYTE("ORI,"); break;
-        case 0xC6: PRINT_BYTE("ADI,"); break;
+        case 0xF1: PRINT_BYTE("ADI,"); break;
 
         // Unknown
         default:
