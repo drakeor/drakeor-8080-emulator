@@ -1592,3 +1592,49 @@ MunitResult
 
     return MUNIT_OK;
 }
+
+/*
+ * Bitwise Operations with accumulator and immediate
+ */
+#define BITWISE_ACC_NUM_OPS 4
+MunitResult
+    test_cpuprocess_bitwise_accumulator(const MunitParameter params[], void* fixture)
+{
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    uint8_t op_results[BITWISE_ACC_NUM_OPS] = {
+        (TEST_MEMORY_BYTE & TEST_MEMORY_BYTE_2),
+        (TEST_MEMORY_BYTE ^ TEST_MEMORY_BYTE_2),
+        (TEST_MEMORY_BYTE | TEST_MEMORY_BYTE_2),
+        (uint8_t)((uint8_t)TEST_MEMORY_BYTE + (uint8_t)TEST_MEMORY_BYTE_2)
+    };
+
+    uint8_t op_code[BITWISE_ACC_NUM_OPS] = {
+        0xE6,
+        0xEE,
+        0xF6,
+        0xC6
+    };
+
+    uint8_t i ;
+    for(i = 0; i < BITWISE_ACC_NUM_OPS; i++) {
+        printf("\nTesting Opcode %02X\n", op_code[i]);
+        SETUP_TEST_2(op_code[i], TEST_MEMORY_BYTE);
+        cpu->A = TEST_MEMORY_BYTE_2;
+        cpu->FLAGS.C = 1;
+        TEST_SUCCESS_BYTE();
+
+        // A should be A & data. Carry should be reset, Zero should be not reset, Sign bit is also set
+        munit_assert_int(cpu->A, ==, op_results[i]);  
+        munit_assert_int(cpu->FLAGS.C, ==, 0);
+        munit_assert_int(cpu->FLAGS.Z, ==, (op_results[i] == 0));
+        munit_assert_int(cpu->FLAGS.S, ==, (op_results[i] >> 7) & 0x1);
+    }
+
+    // Make sure doesn't overflow
+    {
+        SETUP_TEST_OVERFLOW_BYTE(0xE6);
+        munit_assert_int((*cpu).PC, ==, 0);
+    }
+}

@@ -57,6 +57,7 @@
 
 // Test memory to sample for tests
 #define TEST_MEMORY_BYTE 0xAB
+#define TEST_MEMORY_BYTE_2 0xCD
 #define TEST_MEMORY_WORD 0xABCD
 
 /*

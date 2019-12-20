@@ -208,6 +208,12 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x07: PRINT_OP("RLC"); break;
         case 0x0F: PRINT_OP("RRC"); break;
 
+        // Accumulator Bitwise Operators
+        case 0xE6: PRINT_BYTE("ANI,"); break;
+        case 0xEE: PRINT_BYTE("XRI,"); break;
+        case 0xF6: PRINT_BYTE("ORI,"); break;
+        case 0xC6: PRINT_BYTE("ADI,"); break;
+
         // Unknown
         default:
             PRINT_OP("???");

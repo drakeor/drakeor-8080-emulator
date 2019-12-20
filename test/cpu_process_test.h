@@ -255,10 +255,17 @@ MunitResult
 MunitResult
     test_cpuprocess_D3(const MunitParameter params[], void* fixture);
 
+
 /*
  * Register Rotation Instructions
  */
  MunitResult
     test_cpuprocess_register_rotations(const MunitParameter params[], void* fixture);
 
+/*
+ * Bitwise Operations with accumulator and immediate
+ */
+MunitResult
+    test_cpuprocess_bitwise_accumulator(const MunitParameter params[], void* fixture);
+    
 #endif

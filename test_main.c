@@ -274,6 +274,12 @@ MunitTest tests[] = {
     {"/cpu_process/register_rotations", test_cpuprocess_register_rotations,
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
 
+    /*
+     * Bitwise Operations with accumulator and immediate
+     */
+    {"/cpu_process/bitwise_accumulator_immediate", test_cpuprocess_bitwise_accumulator,
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

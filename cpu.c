@@ -1095,6 +1095,48 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 1;
             break;
 
+        /*
+         * Bitwise operations on accumulator
+         */
+        case 0xE6: 
+            GET_BYTE(tmp8);
+            cpu->A = tmp8 & cpu->A;
+            cpu->FLAGS.C = 0;
+            cpu->FLAGS.Z = (cpu->A == 0);
+            cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
+            cpu->PC = cpu->PC + 2;
+
+            break;
+
+        case 0xEE: 
+            GET_BYTE(tmp8);
+            cpu->A = tmp8 ^ cpu->A;
+            cpu->FLAGS.C = 0;
+            cpu->FLAGS.Z = (cpu->A == 0);
+            cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
+            cpu->PC = cpu->PC + 2;
+
+            break;
+
+        case 0xF6: 
+            GET_BYTE(tmp8);
+            cpu->A = tmp8 | cpu->A;
+            cpu->FLAGS.C = 0;
+            cpu->FLAGS.Z = (cpu->A == 0);
+            cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
+            cpu->PC = cpu->PC + 2;
+            break;
+
+        case 0xC6: 
+            GET_BYTE(tmp8);
+            cpu->A = tmp8 + cpu->A;
+            cpu->FLAGS.C = 0;
+            cpu->FLAGS.Z = (cpu->A == 0);
+            cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
+            cpu->PC = cpu->PC + 2;
+            break;
+
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);
