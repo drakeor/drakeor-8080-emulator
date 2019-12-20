@@ -215,6 +215,10 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xF6: PRINT_BYTE("ORI,"); break;
         case 0xF1: PRINT_BYTE("ADI,"); break;
 
+        // Store/Load Accumulator/Memory
+        case 0x3A: PRINT_WORD("LDA,"); break;
+        case 0x32: PRINT_WORD("STA,"); break;
+        
         // Unknown
         default:
             PRINT_OP("???");

@@ -1544,7 +1544,7 @@ MunitResult
     // Doing this allows our macros to work
     struct cpustate r_cpu;
     struct cpustate* cpu = &r_cpu;
-    
+
     // Ensure pops correctly
     {
         // Clear out registers and set the src one in question
@@ -1667,5 +1667,65 @@ MunitResult
     {
         SETUP_TEST_OVERFLOW_BYTE(0xE6);
         munit_assert_int((*cpu).PC, ==, 0);
+    }
+
+    return MUNIT_OK;
+}
+
+/*
+ * Store/Load address to accumulator
+ */
+
+ // Load
+MunitResult
+    test_cpuprocess_3A(const MunitParameter params[], void* fixture)
+{
+    struct cpustate realcpu;
+    struct cpustate* cpu = &realcpu;
+
+    // Ensure we load normally
+    {
+        SETUP_TEST_3(0x3A, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H);
+        program[TEST_MEMORY_RAM_HL] = TEST_MEMORY_BYTE;
+        TEST_SUCCESS_WORD();
+        munit_assert_int(cpu->A, ==, TEST_MEMORY_BYTE);    
+    }
+
+    // Ensure overflows fail
+    {
+        SETUP_TEST_3(0x3A, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H);
+        TEST_FAIL_GENERIC();
+    }
+
+    return MUNIT_OK;
+}
+
+// Store
+MunitResult
+    test_cpuprocess_32(const MunitParameter params[], void* fixture)
+{
+    struct cpustate realcpu;
+    struct cpustate* cpu = &realcpu;
+
+    // Ensure we store normally
+    {
+        SETUP_TEST_3(0x32, TEST_MEMORY_RAM_L, TEST_MEMORY_RAM_H);
+        cpu->A = TEST_MEMORY_BYTE;
+        TEST_SUCCESS_WORD();
+        munit_assert_int(program[TEST_MEMORY_RAM_HL], ==, TEST_MEMORY_BYTE);    
+    }
+
+    // Ensure overflows fail
+    {
+        SETUP_TEST_3(0x32, TEST_MEMORY_OOB_L, TEST_MEMORY_OOB_H);
+        cpu->A = TEST_MEMORY_BYTE;
+        TEST_FAIL_GENERIC();
+    }
+
+    // Ensure we don't write into ROM
+    {
+        SETUP_TEST_3(0x32, TEST_MEMORY_ROM_L, TEST_MEMORY_ROM_H);
+        cpu->A = TEST_MEMORY_BYTE;
+        TEST_FAIL_GENERIC();
     }
 }

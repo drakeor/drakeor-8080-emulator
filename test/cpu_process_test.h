@@ -270,4 +270,12 @@ MunitResult
 MunitResult
     test_cpuprocess_bitwise_accumulator(const MunitParameter params[], void* fixture);
 
+/*
+ * Store/Load address to accumulator
+ */
+MunitResult
+    test_cpuprocess_3A(const MunitParameter params[], void* fixture);
+MunitResult
+    test_cpuprocess_32(const MunitParameter params[], void* fixture);
+
 #endif

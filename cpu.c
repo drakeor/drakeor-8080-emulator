@@ -1144,6 +1144,25 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 2;
             break;
 
+        // Load address to accumulator
+        case 0x3A:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            cpu->A = memory[tmp];
+            cpu->PC = cpu->PC + 3;
+            break;
+        
+        // Store accumulator to address
+        case 0x32:
+            GET_WORD(tmp);
+            if(tmp >= memory_size)
+                 PANIC("attempting to access memory out of bounds");
+            if(tmp < ROM_SIZE)
+                PANIC("0x32 instruction will write into ROM");
+            memory[tmp] = cpu->A;
+            cpu->PC = cpu->PC + 3;
+            break;
 
         // Panic if we don't know the instruction
         default:

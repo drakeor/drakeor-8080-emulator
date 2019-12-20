@@ -282,6 +282,14 @@ MunitTest tests[] = {
     {"/cpu_process/bitwise_accumulator_immediate", test_cpuprocess_bitwise_accumulator,
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
 
+    /*
+     * Store/Load address to accumulator
+     */
+    {"/cpu_process/3A", test_cpuprocess_3A,
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+    {"/cpu_process/32", test_cpuprocess_32,
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
