@@ -14,6 +14,24 @@
 #define GET_WORD(x) { CHECK_BUFFER(2); x = memory[cpu->PC+1] + (memory[cpu->PC+2] << 8);  };
 
 
+// Resets the CPU
+int init_cpu(struct cpustate* cpu) {
+    // Set the PC register to PROGRAM_START
+    // Set SP to start at 0xF000
+    cpu->PC = PROGRAM_START; 
+    cpu->SP = STACK_START;
+
+    // Zero out the registers
+    cpu->A = 0;
+    cpu->BC = 0;
+    cpu->DE = 0;
+    cpu->HL = 0;
+    cpu->PSW = 0;
+
+    return 0;
+}
+
+
 /*
  * Helper functions
  */
@@ -42,23 +60,12 @@ int do_call_inst(struct cpustate* cpu, uint8_t opcode, uint8_t* memory, uint16_t
     return 0;
 }
 
-// Resets the CPU
-int init_cpu(struct cpustate* cpu) {
-    // Set the PC register to PROGRAM_START
-    // Set SP to start at 0xF000
-    cpu->PC = PROGRAM_START; 
-    cpu->SP = STACK_START;
+/*
+ * Main function
+ */
 
-    // Zero out the registers
-    cpu->A = 0;
-    cpu->BC = 0;
-    cpu->DE = 0;
-    cpu->HL = 0;
-    cpu->PSW = 0;
 
-    return 0;
-}
-
+ 
 // Process a CPU instruction
 int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
 {

@@ -54,7 +54,6 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x6E: PRINT_OP("MOV L,(HL)"); break;
         case 0x7E: PRINT_OP("MOV A,(HL)"); break;
 
-
         // MOV - Transfer from memory to A
         case 0x0A: PRINT_OP("MOV A,(BC)"); break;
         case 0x1A: PRINT_OP("MOV A,(DE)"); break;
@@ -111,7 +110,6 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xF2: PRINT_WORD("JP,"); break;
         case 0xFA: PRINT_WORD("JM,"); break;
 
-	
         // RET Functions
         case 0xc9: PRINT_OP("RET"); break;
 
@@ -218,7 +216,7 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         // Store/Load Accumulator/Memory
         case 0x3A: PRINT_WORD("LDA,"); break;
         case 0x32: PRINT_WORD("STA,"); break;
-        
+
         // Unknown
         default:
             PRINT_OP("???");

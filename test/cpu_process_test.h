@@ -278,4 +278,10 @@ MunitResult
 MunitResult
     test_cpuprocess_32(const MunitParameter params[], void* fixture);
 
+/* 
+* Bitwise operations with accumulator
+*/
+MunitResult
+    test_cpuprocess_bitwise_accum_reg(const MunitParameter params[], void* fixture);
+    
 #endif

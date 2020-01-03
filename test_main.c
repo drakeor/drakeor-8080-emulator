@@ -290,6 +290,12 @@ MunitTest tests[] = {
     {"/cpu_process/32", test_cpuprocess_32,
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
 
+    /* 
+     * Bitwise operations with accumulator and another register
+     */
+    {"/cpu_process/bitwise_accumulator_reg", test_cpuprocess_bitwise_accum_reg,
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+     
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

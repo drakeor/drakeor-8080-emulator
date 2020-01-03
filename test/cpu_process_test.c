@@ -1729,3 +1729,88 @@ MunitResult
         TEST_FAIL_GENERIC();
     }
 }
+
+// Bitwise operations from accumulator to other register.
+// 0 = &, 1 = ^, 2 = |
+uint8_t do_bitwise_op(uint8_t a, uint8_t b, uint8_t op)
+{
+    if(op == 0) {
+        return a & b;
+    }
+    if(op == 1) {
+        return a ^ b;
+    }
+    if(op == 2) {
+        return a | b;
+    }
+    munit_assert_int(1, ==, -1);
+}
+
+MunitResult
+    test_cpuprocess_bitwise_accum_reg(const MunitParameter params[], void* fixture)
+{
+    // Doing this allows our macros to work
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+
+    // Helper array to map bits to registers
+    // Position 6 in array is mem access. We need to handle that specially.
+    uint8_t *reg_mapping[8] = {
+        &(r_cpu.B),
+        &(r_cpu.C),
+        &(r_cpu.D),
+        &(r_cpu.E),
+        &(r_cpu.H),
+        &(r_cpu.L),
+        NULL,
+        &(r_cpu.A),      
+    };
+
+    // Register names
+    char *reg_naming[8] = {
+        "B",
+        "C",
+        "D",
+        "E",
+        "H",
+        "L",
+        "Memory[HL]",
+        "A"
+    };
+
+    uint8_t i = 0;
+    uint8_t j = 0;
+    // i = operator to test.
+    
+    for(i = 0; i < 3; i++) {
+        // Construct the opcodes to test
+        uint8_t opcode = 0b10100000;
+        if(i == 1) {
+            opcode = 0b10101000;
+        }
+        if(i == 2) {
+            opcode = 0b10110000;
+        }
+        for(j = 0; j < 8; j++) {
+            // Skip over memory operations for now
+            if(j == 6)
+                continue;
+
+            uint8_t fin_opcode = opcode | j;
+            printf("\nTesting Opcode %02X\n", fin_opcode);
+            SETUP_TEST_1(fin_opcode);
+            cpu->A = TEST_MEMORY_BYTE;
+            (*reg_mapping[j]) = TEST_MEMORY_BYTE_2;
+            cpu->FLAGS.C = 1;
+            TEST_SUCCESS_BYTE();
+
+            uint8_t op_result = do_bitwise_op(TEST_MEMORY_BYTE, TEST_MEMORY_BYTE_2, i);
+
+            // A should be A & data. Carry should be reset, Zero should be not reset, Sign bit is also set
+            munit_assert_int(cpu->A, ==, op_result);  
+            munit_assert_int(cpu->FLAGS.C, ==, 0);
+            munit_assert_int(cpu->FLAGS.Z, ==, (op_result == 0));
+            munit_assert_int(cpu->FLAGS.S, ==, (op_result >> 7) & 0x1);
+        }
+    }
+}
