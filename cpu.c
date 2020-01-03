@@ -28,6 +28,8 @@ int init_cpu(struct cpustate* cpu) {
     cpu->HL = 0;
     cpu->PSW = 0;
 
+    cpu->INTE = 0;
+
     return 0;
 }
 
@@ -1229,6 +1231,16 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 1;
             break;
         
+        // Interrupts
+        case 0xF3:
+            cpu->INTE = 0;
+            cpu->PC = cpu->PC + 1;
+            break;
+        case 0xFB:
+            cpu->INTE = 1;
+            cpu->PC = cpu->PC + 1;
+            break;
+
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);

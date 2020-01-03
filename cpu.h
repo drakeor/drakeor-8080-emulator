@@ -59,6 +59,9 @@ struct cpustate {
         } FLAGS;
         uint8_t PSW;
     };
+
+    // Interrupt Enable Bit
+    uint8_t INTE;
 };
 
 

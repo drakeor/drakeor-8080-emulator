@@ -296,6 +296,12 @@ MunitTest tests[] = {
     {"/cpu_process/bitwise_accumulator_reg", test_cpuprocess_bitwise_accum_reg,
         NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
      
+     /*
+      * Interrupts
+      */
+    {"/cpu_process/interrupts", test_cpuprocess_interrupts,
+        NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+
     // Required
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

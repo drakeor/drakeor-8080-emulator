@@ -10,6 +10,7 @@ void assert_state_zero(struct cpustate* state) {
     munit_assert_int(state->SP, ==, STACK_START);
     munit_assert_int(state->PC, ==, PROGRAM_START);
     munit_assert_int(state->PSW, ==, 0);
+    munit_assert_int(state->INTE, ==, 0);
 }
 
 // Ensures the cpu registers start at the proper values
@@ -35,7 +36,8 @@ MunitResult
         cpu.SP = 0xFEFE;
         cpu.PC = 0x1010;
         cpu.PSW = 0xDE;
-
+        cpu.INTE = 0x1;
+        
         init_cpu(&cpu);
         assert_state_zero(&cpu);
 

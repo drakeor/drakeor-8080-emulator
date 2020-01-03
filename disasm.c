@@ -243,6 +243,10 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0xB6: PRINT_OP("ORA M"); break;
         case 0xB7: PRINT_OP("ORA A"); break;
 
+        // Interrupts
+        case 0xFB: PRINT_OP("EI"); break;
+        case 0xF3: PRINT_OP("DI"); break;
+
         // Unknown
         default:
             PRINT_OP("???");

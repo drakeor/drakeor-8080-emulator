@@ -283,5 +283,11 @@ MunitResult
 */
 MunitResult
     test_cpuprocess_bitwise_accum_reg(const MunitParameter params[], void* fixture);
+
+/*
+* Interrupts
+*/
+MunitResult
+    test_cpuprocess_interrupts(const MunitParameter params[], void* fixture);
     
 #endif

@@ -1817,3 +1817,25 @@ MunitResult
     return MUNIT_OK;
 
 }
+
+MunitResult
+    test_cpuprocess_interrupts(const MunitParameter params[], void* fixture)
+{
+    struct cpustate r_cpu;
+    struct cpustate* cpu = &r_cpu;
+    
+    // Disable Interrupts
+    {
+        SETUP_TEST_1(0xF3);
+        cpu->INTE = 1;
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int(cpu->INTE, ==, 0x0);
+    }
+    // Enable interrupts
+    {
+        SETUP_TEST_1(0xFB);
+        TEST_SUCCESS_OPCODE();
+        munit_assert_int(cpu->INTE, ==, 0x1);
+    }
+    return MUNIT_OK;
+}
