@@ -1730,22 +1730,6 @@ MunitResult
     }
 }
 
-// Bitwise operations from accumulator to other register.
-// 0 = &, 1 = ^, 2 = |
-uint8_t do_bitwise_op(uint8_t a, uint8_t b, uint8_t op)
-{
-    if(op == 0) {
-        return a & b;
-    }
-    if(op == 1) {
-        return a ^ b;
-    }
-    if(op == 2) {
-        return a | b;
-    }
-    munit_assert_int(1, ==, -1);
-}
-
 MunitResult
     test_cpuprocess_bitwise_accum_reg(const MunitParameter params[], void* fixture)
 {
@@ -1783,28 +1767,44 @@ MunitResult
     // i = operator to test.
     
     for(i = 0; i < 3; i++) {
-        // Construct the opcodes to test
-        uint8_t opcode = 0b10100000;
-        if(i == 1) {
-            opcode = 0b10101000;
-        }
-        if(i == 2) {
-            opcode = 0b10110000;
-        }
+
         for(j = 0; j < 8; j++) {
+
             // Skip over memory operations for now
             if(j == 6)
                 continue;
 
-            uint8_t fin_opcode = opcode | j;
-            printf("\nTesting Opcode %02X\n", fin_opcode);
-            SETUP_TEST_1(fin_opcode);
+            // Construct the opcodes to test
+            uint8_t opcode = 0;
+            if(i == 0) {
+                opcode = 0b10100000 | j;
+            }
+            if(i == 1) {
+                opcode = 0b10101000 | j;
+            }
+            if(i == 2) {
+                opcode = 0b10110000 | j;
+            }
+
+            printf("\nTesting Opcode %02X", opcode);
+
+            SETUP_TEST_1(opcode);
             cpu->A = TEST_MEMORY_BYTE;
             (*reg_mapping[j]) = TEST_MEMORY_BYTE_2;
             cpu->FLAGS.C = 1;
-            TEST_SUCCESS_BYTE();
 
-            uint8_t op_result = do_bitwise_op(TEST_MEMORY_BYTE, TEST_MEMORY_BYTE_2, i);
+            uint8_t op_result = 0;
+            if(i == 0) {
+                op_result = cpu->A & (*reg_mapping[j]);
+            }
+            if(i == 1) {
+                op_result =  cpu->A ^ (*reg_mapping[j]);
+            }
+            if(i == 2) {
+                op_result =  cpu->A | (*reg_mapping[j]);
+            }
+
+            TEST_SUCCESS_OPCODE();
 
             // A should be A & data. Carry should be reset, Zero should be not reset, Sign bit is also set
             munit_assert_int(cpu->A, ==, op_result);  
@@ -1813,4 +1813,7 @@ MunitResult
             munit_assert_int(cpu->FLAGS.S, ==, (op_result >> 7) & 0x1);
         }
     }
+
+    return MUNIT_OK;
+
 }

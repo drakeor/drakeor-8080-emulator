@@ -217,6 +217,32 @@ int op_to_text(unsigned char* buffer, int buffer_size, int* counter)
         case 0x3A: PRINT_WORD("LDA,"); break;
         case 0x32: PRINT_WORD("STA,"); break;
 
+        // Bitwise operations
+        case 0xA0: PRINT_OP("ANA B"); break;
+        case 0xA1: PRINT_OP("ANA C"); break;
+        case 0xA2: PRINT_OP("ANA D"); break;
+        case 0xA3: PRINT_OP("ANA E"); break;
+        case 0xA4: PRINT_OP("ANA H"); break;
+        case 0xA5: PRINT_OP("ANA L"); break;
+        case 0xA6: PRINT_OP("ANA M"); break;
+        case 0xA7: PRINT_OP("ANA A"); break;
+        case 0xA8: PRINT_OP("XRA B"); break;
+        case 0xA9: PRINT_OP("XRA C"); break;
+        case 0xAA: PRINT_OP("XRA D"); break;
+        case 0xAB: PRINT_OP("XRA E"); break;
+        case 0xAC: PRINT_OP("XRA H"); break;
+        case 0xAD: PRINT_OP("XRA L"); break;
+        case 0xAE: PRINT_OP("XRA M"); break;
+        case 0xAF: PRINT_OP("ANA A"); break;
+        case 0xB0: PRINT_OP("ORA B"); break;
+        case 0xB1: PRINT_OP("ORA C"); break;
+        case 0xB2: PRINT_OP("ORA D"); break;
+        case 0xB3: PRINT_OP("ORA E"); break;
+        case 0xB4: PRINT_OP("ORA H"); break;
+        case 0xB5: PRINT_OP("ORA L"); break;
+        case 0xB6: PRINT_OP("ORA M"); break;
+        case 0xB7: PRINT_OP("ORA A"); break;
+
         // Unknown
         default:
             PRINT_OP("???");

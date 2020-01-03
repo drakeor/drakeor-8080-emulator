@@ -87,7 +87,7 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
     tmp8 = 0;
 
     // Reg mapping
-    char *reg_mapping[8] = {
+    uint8_t *reg_mapping[8] = {
         &(cpu->B),
         &(cpu->C),
         &(cpu->D),
@@ -1171,6 +1171,64 @@ int process_cpu(struct cpustate* cpu, uint8_t* memory, uint16_t memory_size)
             cpu->PC = cpu->PC + 3;
             break;
 
+        // Bitwise operations on accumulator to register
+        case 0xA0:
+        case 0xA1:
+        case 0xA2:
+        case 0xA3:
+        case 0xA4:
+        case 0xA5:
+        //case 0xA6:
+        case 0xA7:
+        case 0xA8:
+        case 0xA9:
+        case 0xAA:
+        case 0xAB:
+        case 0xAC:
+        case 0xAD:
+        //case 0xAE:
+        case 0xAF:
+        case 0xB0:
+        case 0xB1:
+        case 0xB2:
+        case 0xB3:
+        case 0xB4:
+        case 0xB5:
+        //case 0xB6:
+        case 0xB7:
+
+            // Extract parts of opcode
+            tmp8 = 0b11111000 & memory[cpu->PC];
+            src_byte = 0b00000111 & memory[cpu->PC];
+
+            // Memory operations get ignored
+            if(src_byte == 6) {
+                // Should never get here
+                PANIC("bitwise acc to register opcode for memory ops not implemented.");
+            }
+
+            // & operator
+
+            if(tmp8 == 0b10100000) {
+                cpu->A = cpu->A & (*reg_mapping[src_byte]);
+            // ^ operator
+            } else if(tmp8 == 0b10101000) {
+                cpu->A = cpu->A ^ (*reg_mapping[src_byte]);
+            // | operator
+            } else if(tmp8 == 0b10110000) {
+                cpu->A = cpu->A | (*reg_mapping[src_byte]);
+            } else {
+                // Should never get here
+                PANIC("invalid operation for bitwise acc to register opcode.");
+            }
+
+            // Set flags
+            cpu->FLAGS.C = 0;
+            cpu->FLAGS.Z = (cpu->A == 0) & 0x1;
+            cpu->FLAGS.S = (cpu->A >> 7) & 0x1;
+            cpu->PC = cpu->PC + 1;
+            break;
+        
         // Panic if we don't know the instruction
         default:
             printf("Cannot process opcode %02X\n", memory[cpu->PC]);
